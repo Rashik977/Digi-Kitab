@@ -6,13 +6,21 @@ import { BaseModel } from "./base.model";
 export class UserModel extends BaseModel {
   // Function to create a user
   static async create(user: User, createdBy: User) {
-    const userTOCreate = {
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      createdBy: createdBy.id,
-    };
-
+    let userTOCreate;
+    if (!createdBy) {
+      userTOCreate = {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      };
+    } else {
+      userTOCreate = {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        createdBy: createdBy.id,
+      };
+    }
     await this.queryBuilder().insert(userTOCreate).table("users");
   }
 
@@ -141,15 +149,5 @@ export class UserModel extends BaseModel {
   // Function to delete user
   static delete(id: string) {
     return this.queryBuilder().delete().table("users").where({ id });
-  }
-
-  // Function to delete user roles
-  static deleteUserRoles(userId: string) {
-    return this.queryBuilder().delete().table("user_roles").where({ userId });
-  }
-
-  // Function to delete user tasks
-  static deleteUserTasks(userId: string) {
-    return this.queryBuilder().delete().table("tasks").where({ userId });
   }
 }

@@ -84,9 +84,6 @@ export const deleteUsers = async (id: number) => {
   // Check if users exists
   if (!user) throw new NotFoundError("users not found");
 
-  //deleting the user's data and then deleting the user
-  await UserModel.UserModel.deleteUserTasks(id.toString());
-  await UserModel.UserModel.deleteUserRoles(id.toString());
   await UserModel.UserModel.delete(id.toString());
 
   return { message: "User deleted" };

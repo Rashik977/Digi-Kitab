@@ -5,6 +5,8 @@ import * as UserService from "../Services/user.services";
 import loggerWithNameSpace from "../Utils/logger";
 import HTTP from "http-status-codes";
 import { getUserQuery } from "../Interfaces/User.interface";
+import { Roles } from "../Constants/Roles";
+import { UnauthorizedError } from "../Error/Error";
 
 const logger = loggerWithNameSpace("UserController");
 
@@ -26,7 +28,7 @@ export async function getUsers(
 
 // Create a new user
 export async function createUser(
-  req: Request<{ id: string }>,
+  req: Request,
   res: Response,
   next: NextFunction
 ) {
@@ -50,7 +52,18 @@ export async function updateUsers(
 ) {
   const id = parseInt(req.params.id);
 
+  const userIdFromToken = req.user!.id;
+  const userRoleFromToken = req.user!.role;
+  const userIdFromParams = req.params.id;
+
   try {
+    if (
+      userRoleFromToken !== Roles.SUPER &&
+      userIdFromToken.toString() !== userIdFromParams.toString()
+    ) {
+      throw new UnauthorizedError("Unauthorized");
+    }
+
     logger.info("Updating user");
     const message = await UserService.updateUsers(id, req.body, req.user!);
     res.status(HTTP.OK).json(message);

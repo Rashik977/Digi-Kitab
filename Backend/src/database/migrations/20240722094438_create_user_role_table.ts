@@ -17,7 +17,8 @@ export async function up(knex: Knex): Promise<void> {
       .unsigned()
       .notNullable()
       .references("id")
-      .inTable("users");
+      .inTable("users")
+      .onDelete("CASCADE");
 
     table
       .bigInteger("role_id")
@@ -25,7 +26,7 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .references("id")
       .inTable("roles");
-    0;
+
     table.timestamp("created_at").notNullable().defaultTo(knex.raw("now()"));
 
     table

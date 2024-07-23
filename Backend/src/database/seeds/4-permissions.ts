@@ -26,16 +26,40 @@ export function seed(knex: Knex): Promise<void> {
           permission: "users.delete",
         },
         {
-          permission: "tasks.get",
+          permission: "staff.get",
         },
         {
-          permission: "tasks.post",
+          permission: "staff.post",
         },
         {
-          permission: "tasks.put",
+          permission: "staff.put",
         },
         {
-          permission: "tasks.delete",
+          permission: "staff.delete",
+        },
+        {
+          permission: "admin.get",
+        },
+        {
+          permission: "admin.post",
+        },
+        {
+          permission: "admin.put",
+        },
+        {
+          permission: "admin.delete",
+        },
+        {
+          permission: "book.get",
+        },
+        {
+          permission: "book.post",
+        },
+        {
+          permission: "book.put",
+        },
+        {
+          permission: "book.delete",
         },
       ]);
     });

@@ -1,5 +1,5 @@
 import { Knex } from "knex";
-import { Roles } from "../../constants/Roles";
+import { Roles } from "../../Constants/Roles";
 
 const TABLE_NAME = "roles";
 
@@ -19,6 +19,9 @@ export function seed(knex: Knex): Promise<void> {
         },
         {
           role: Roles.USER,
+        },
+        {
+          role: Roles.STAFF,
         },
       ]);
     });

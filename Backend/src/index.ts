@@ -7,6 +7,9 @@ import { requestLogger } from "./Middleware/logger";
 import router from "./Routes";
 import { errorHandler } from "./Middleware/errorHandling";
 
+import swaggerUi from "swagger-ui-express";
+import swaggerSpecs from "./swaggerConfig";
+
 const app = express();
 app.use(cors());
 
@@ -20,6 +23,8 @@ app.use(express.json());
 
 // For logger
 app.use(requestLogger);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Add routes
 app.use(router);
