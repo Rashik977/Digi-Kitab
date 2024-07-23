@@ -1,5 +1,21 @@
+import { jwtDecode } from "jwt-decode";
+import { User } from "../interfaces/User.interface";
+
+let globalUser: User | null = null;
+
 export const saveToken = (token: string) => {
   localStorage.setItem("accessToken", token);
+  globalUser = jwtDecode<User>(token);
+};
+
+export const getUser = (): User | null => {
+  if (!globalUser) {
+    const token = getToken();
+    if (token) {
+      globalUser = jwtDecode<User>(token);
+    }
+  }
+  return globalUser;
 };
 
 export const getToken = (): string | null => {
@@ -9,6 +25,7 @@ export const getToken = (): string | null => {
 export const removeToken = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
+  globalUser = null;
 };
 
 export const isAuthenticated = (): boolean => {

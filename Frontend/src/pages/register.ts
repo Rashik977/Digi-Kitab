@@ -1,4 +1,4 @@
-import { register } from "../utils/api";
+import { register } from "../services/apiServices";
 import { createElement } from "../utils/createElement";
 
 export const render = () => {

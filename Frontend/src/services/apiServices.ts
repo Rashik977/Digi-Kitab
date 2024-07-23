@@ -1,4 +1,4 @@
-import { getToken, refreshToken } from "./auth";
+import { getToken, getUser, refreshToken } from "./authServices";
 
 export const login = async (email: string, password: string): Promise<void> => {
   const response = await fetch("http://localhost:3000/auth/login", {
@@ -26,6 +26,30 @@ export const register = async (
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password, name }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error.message);
+  }
+};
+
+export const updateUser = async (
+  name: string,
+  email: string,
+  password: string
+): Promise<void> => {
+  const user = getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+  const response = await fetch(`http://localhost:3000/users/${user.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify({ name, email, password }),
   });
 
   if (!response.ok) {

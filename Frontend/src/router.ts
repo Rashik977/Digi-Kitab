@@ -1,4 +1,4 @@
-import { isAuthenticated } from "./utils/auth";
+import { isAuthenticated } from "./services/authServices";
 
 // router.ts
 const routes: { [key: string]: () => Promise<any> } = {
@@ -20,11 +20,15 @@ export const initRouter = () => {
 
   const navigateTo = async (path: string) => {
     try {
-      const route = routes[path] || routes["/"];
+      const route = routes[path];
       if (!route) {
-        console.error(`Route not found for path: ${path}`);
+        // If route is not found, load the NotFound page
+        const notFoundModule = await import("./pages/notFound");
+        container.innerHTML = "";
+        container.appendChild(notFoundModule.render());
         return;
       }
+
       const module = await route();
       container.innerHTML = "";
       container.appendChild(module.render());
@@ -42,10 +46,9 @@ export const initRouter = () => {
     const target = e.target as HTMLAnchorElement;
     if (target.matches("[data-link]")) {
       e.preventDefault();
-      console.log("Navigating to", target.href);
-      const path = new URL(target.href).pathname;
-      window.history.pushState(null, "", path);
-      navigateTo(path);
+      console.log("Navigating to", target.getAttribute("href"));
+      window.history.pushState(null, "", target.getAttribute("href"));
+      navigateTo(target.getAttribute("href")!);
     }
   });
 

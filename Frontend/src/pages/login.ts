@@ -1,16 +1,29 @@
-import { login } from "../utils/api";
+import { login } from "../services/apiServices";
 import { createElement } from "../utils/createElement";
 
 export const render = () => {
   const container = createElement("div", {
-    className: "flex justify-center items-center h-screen",
+    className: "flex flex-col justify-center items-center h-screen",
+    style:
+      "background-image: url('/images/bookBG.jpg'); background-size: cover;",
   });
 
-  const form = createElement("form", {
-    className: "bg-white p-6 rounded shadow-md",
+  const alpha = createElement("div", {
+    className: "bg-black bg-opacity-50 w-full h-full absolute",
   });
+
+  const loginDiv = createElement("div", {
+    className: "z-10 bg-white p-10 rounded shadow-md",
+  });
+
+  const logo = createElement("h1", {
+    className: "text-4xl text-teal-700 text-center pb-10 ",
+  });
+
+  logo.textContent = "Digi-Kitab";
+
+  const form = createElement("form");
   form.innerHTML = `
-    <h2 class="text-2xl mb-4">Login</h2>
     <input type="email" id="email" placeholder="Email" class="mb-2 p-2 border rounded w-full">
     <input type="password" id="password" placeholder="Password" class="mb-4 p-2 border rounded w-full">
     <button type="submit" class="bg-blue-500 text-white p-2 rounded w-full">Login</button>
@@ -45,6 +58,9 @@ export const render = () => {
     });
   });
 
-  container.appendChild(form);
+  container.appendChild(alpha);
+  container.appendChild(loginDiv);
+  loginDiv.appendChild(logo);
+  loginDiv.appendChild(form);
   return container;
 };
