@@ -13,7 +13,8 @@ export const render = () => {
   });
 
   const loginDiv = createElement("div", {
-    className: "z-10 bg-white p-10 rounded shadow-md",
+    className:
+      "z-10 bg-white p-10 rounded shadow-md h-screen md:h-auto w-full md:w-1/2",
   });
 
   const logo = createElement("h1", {

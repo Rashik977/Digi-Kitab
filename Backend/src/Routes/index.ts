@@ -1,6 +1,7 @@
 import { Router } from "express";
 import userRoutes from "./user.route";
 import authRoutes from "./auth.route";
+import bookRoutes from "./book.route";
 
 /**
  * @swagger
@@ -25,5 +26,6 @@ const router = Router();
 
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
+router.use("/books", bookRoutes);
 
 export default router;

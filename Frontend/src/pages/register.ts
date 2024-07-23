@@ -4,13 +4,28 @@ import { createElement } from "../utils/createElement";
 export const render = () => {
   const container = createElement("div", {
     className: "flex justify-center items-center h-screen",
+    style:
+      "background-image: url('/images/bookBG.jpg'); background-size: cover;",
   });
 
-  const form = createElement("form", {
-    className: "bg-white p-6 rounded shadow-md",
+  const alpha = createElement("div", {
+    className: "bg-black bg-opacity-50 w-full h-full absolute",
   });
+
+  const loginDiv = createElement("div", {
+    className:
+      "z-10 bg-white p-10 rounded shadow-md h-screen md:h-auto md:w-1/2",
+  });
+
+  const logo = createElement("h1", {
+    className: "text-4xl text-teal-700 text-center pb-10 ",
+  });
+
+  logo.textContent = "Digi-Kitab";
+
+  const form = createElement("form");
   form.innerHTML = `
-    <h2 class="text-2xl mb-4">Register</h2>
+  
     <input type="text" placeholder="Name" id="name" class="mb-2 p-2 border rounded w-full">
     <input type="email" placeholder="Email" id="email" class="mb-2 p-2 border rounded w-full">
     <input type="password" placeholder="Password" id="password" class="mb-2 p-2 border rounded w-full">
@@ -53,6 +68,9 @@ export const render = () => {
     });
   });
 
-  container.appendChild(form);
+  container.appendChild(alpha);
+  container.appendChild(loginDiv);
+  loginDiv.appendChild(logo);
+  loginDiv.appendChild(form);
   return container;
 };
