@@ -21,6 +21,7 @@ export async function up(knex: Knex): Promise<void> {
     table.integer("totalChapters").notNullable();
     table.string("category", 100).notNullable();
     table.integer("year").nullable();
+    table.text("cover_path").nullable();
     table.text("epubFilePath").notNullable();
 
     table.timestamp("created_at").notNullable().defaultTo(knex.raw("now()"));

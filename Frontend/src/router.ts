@@ -6,12 +6,20 @@ const routes: { [key: string]: () => Promise<any> } = {
   "/login": () => import("./pages/login"),
   "/register": () => import("./pages/register"),
 
-  "/dashboard": async () => {
+  "/settings": async () => {
     if (!isAuthenticated()) {
       window.history.pushState(null, "", "/login");
       return import("./pages/login"); // Redirect to login page
     }
-    return import("./pages/dashboard");
+    return import("./pages/settings");
+  },
+
+  "/buyBooks": async () => {
+    if (!isAuthenticated()) {
+      window.history.pushState(null, "", "/login");
+      return import("./pages/login"); // Redirect to login page
+    }
+    return import("./pages/buyBooks");
   },
 };
 

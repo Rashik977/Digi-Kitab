@@ -22,7 +22,8 @@ export class BookModel extends BaseModel {
         "price",
         "rating",
         "category",
-        "year"
+        "year",
+        "cover_path"
       )
       .table("books")
       .limit(size)

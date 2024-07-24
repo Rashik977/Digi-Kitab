@@ -1,17 +1,14 @@
-import { updateUser } from "../services/apiServices";
+import { updateUser } from "../services/userServices";
 import { removeToken } from "../services/authServices";
 import { createElement } from "../utils/createElement";
+import { Navbar } from "../components/userNavigation";
 
 export const render = () => {
+  const main = createElement("main");
+  const navigation = Navbar();
   const container = createElement("div", {
     className: "p-6 flex flex-col items-center justify-center gap-10",
   });
-
-  const heading = createElement(
-    "h1",
-    { className: "text-3xl mb-4" },
-    "Dashboard"
-  );
 
   const form = createElement("form", {
     className: "bg-white p-6 rounded shadow-md",
@@ -65,8 +62,10 @@ export const render = () => {
     dispatchEvent(event);
   });
 
-  container.appendChild(heading);
   container.appendChild(form);
   container.appendChild(logoutButton);
-  return container;
+  main.appendChild(navigation);
+  main.appendChild(container);
+
+  return main;
 };

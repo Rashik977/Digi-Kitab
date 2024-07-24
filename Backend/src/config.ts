@@ -18,6 +18,11 @@ const config = {
     name: process.env.DB_NAME,
     port: process.env.DB_PORT,
   },
+  book: {
+    coverPath: process.env.BOOK_COVER_PATH,
+    bookFilePathFiction: process.env.BOOK_FILE_PATH_FICTION,
+    bookFilePathNonFiction: process.env.BOOK_FILE_PATH_NON_FICTION,
+  },
 };
 
 export default config;

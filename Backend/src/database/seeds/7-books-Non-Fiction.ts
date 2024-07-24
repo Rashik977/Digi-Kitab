@@ -2,9 +2,11 @@ import { Knex } from "knex";
 import fs from "fs";
 import path from "path";
 import EPub from "epub";
+import config from "../../config";
 
 const TABLE_NAME = "books";
-const EBOOKS_DIR = `C:/Users/rasik/Documents/web projects/ebooks/Non-Fiction`;
+const EBOOKS_DIR = config.book.bookFilePathNonFiction || "";
+const EBOOKS_COVER_DIR = config.book.coverPath || "";
 
 // Example genre and category mapping
 const genreMapping: {
@@ -48,6 +50,28 @@ const readEpubMetadata = (filePath: string) =>
         genre: "Unknown",
       };
 
+      let coverPath = "";
+      const coverItem = Object.values(epub.manifest).find((item: any) =>
+        item["media-type"]?.startsWith("image")
+      );
+      if (coverItem) {
+        const coverFileName = `${path.basename(
+          filePath,
+          path.extname(filePath)
+        )}_cover.${coverItem["media-type"].split("/")[1]}`;
+        coverPath = `/covers/${coverFileName}`;
+        epub.getImage(coverItem.id, (error, data, mimeType) => {
+          if (error) {
+            console.error(
+              `Failed to extract cover image for ${filePath}:`,
+              error
+            );
+          } else {
+            fs.writeFileSync(path.join(EBOOKS_COVER_DIR, coverFileName), data);
+          }
+        });
+      }
+
       resolve({
         title: epub.metadata.title,
         author: epub.metadata.creator,
@@ -59,6 +83,7 @@ const readEpubMetadata = (filePath: string) =>
         year: isNaN(publicationYear!) ? null : publicationYear, // Handle cases where the year is not a number
         price: Math.floor(Math.random() * 5) + 1,
         rating: Math.floor(Math.random() * 5) + 1,
+        cover_path: coverPath,
       });
     });
     epub.on("error", reject);

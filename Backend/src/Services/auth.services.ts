@@ -66,9 +66,8 @@ export async function refresh(body: { refreshToken: string }) {
     const payload = { id, name, email, permissions, role };
 
     const accessToken = await generateAccessToken(payload);
-    const refreshToken = await generateRefreshToken(payload);
 
-    return { accessToken, refreshToken };
+    return { accessToken };
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === "TokenExpiredError") {

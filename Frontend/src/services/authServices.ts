@@ -42,7 +42,7 @@ export const refreshToken = async (): Promise<void> => {
   }
 
   try {
-    const response = await fetch("/api/refresh", {
+    const response = await fetch("http://localhost:3000/auth/refresh", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken }),
@@ -59,5 +59,42 @@ export const refreshToken = async (): Promise<void> => {
     console.error("Token refresh failed:", error);
     removeToken();
     window.history.pushState(null, "", "/login");
+  }
+};
+
+export const fetchWithAuth = async (
+  url: string,
+  options: RequestInit = {}
+): Promise<Response> => {
+  const token = getToken();
+
+  if (token) {
+    options.headers = {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
+  try {
+    const response = await fetch(url, options);
+
+    if (response.status === 401) {
+      // Handle token expiration
+      await refreshToken();
+      // Retry the request with a new token
+      const newToken = getToken();
+      if (newToken) {
+        options.headers = {
+          ...options.headers,
+          Authorization: `Bearer ${newToken}`,
+        };
+        return fetch(url, options);
+      }
+    }
+
+    return response;
+  } catch (error) {
+    console.error("API request failed:", error);
+    throw error; // Optionally rethrow to handle at the calling site
   }
 };

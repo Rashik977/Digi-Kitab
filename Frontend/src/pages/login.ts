@@ -1,4 +1,4 @@
-import { login } from "../services/apiServices";
+import { login } from "../services/userServices";
 import { createElement } from "../utils/createElement";
 
 export const render = () => {
@@ -43,7 +43,7 @@ export const render = () => {
       await login(email.value, password.value); // Perform login
 
       // Redirect to dashboard or another route upon successful login
-      window.history.pushState(null, "", "/dashboard");
+      window.history.pushState(null, "", "/buyBooks");
       window.dispatchEvent(new Event("popstate")); // Trigger routing
     } catch (error) {
       const errorElement = form.querySelector(".error") as HTMLElement;
