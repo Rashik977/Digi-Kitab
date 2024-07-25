@@ -8,4 +8,5 @@ export interface Book {
   category: string;
   year: number;
   coverPath: string;
+  desc: string;
 }

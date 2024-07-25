@@ -23,3 +23,15 @@ export const getBooks = async (query: getBookQuery) => {
   };
   return { data, meta };
 };
+
+// Get a single book by ID
+export const getBookById = async (id: number) => {
+  const data = await BookModel.BookModel.getBookById(id);
+
+  if (!data) throw new NotFoundError("Book not found");
+
+  data.coverPath = encodeURI(
+    `http://localhost:${config.port}${data.coverPath}`
+  );
+  return data;
+};

@@ -2,6 +2,13 @@ import Joi from "joi";
 
 // Define the schema for the user query
 export const getBookQuerySchema = Joi.object({
+  category: Joi.string().optional(),
+  genre: Joi.string().optional(),
+  rating: Joi.number().optional(),
+  priceMin: Joi.number().optional(),
+  priceMax: Joi.number().optional(),
+  newlyAdded: Joi.number().optional(),
+
   q: Joi.string().optional(),
   page: Joi.number()
     .min(1)

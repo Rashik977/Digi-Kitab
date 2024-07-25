@@ -1,6 +1,6 @@
 import express from "express";
 import { authenticate, authorize } from "../Middleware/auth.middleware";
-import { getBooks } from "../Controller/book.controller";
+import { getBookById, getBooks } from "../Controller/book.controller";
 import { validateReqQuery } from "../Middleware/validator";
 import { getBookQuerySchema } from "../Schema/book.schema";
 
@@ -13,5 +13,7 @@ bookRoutes.get(
   validateReqQuery(getBookQuerySchema),
   getBooks
 );
+
+bookRoutes.get("/:id", authenticate, authorize("book.get"), getBookById);
 
 export default bookRoutes;

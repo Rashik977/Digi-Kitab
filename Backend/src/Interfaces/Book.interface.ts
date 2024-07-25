@@ -17,4 +17,10 @@ export interface getBookQuery {
   q?: string;
   page?: number;
   size?: number;
+  category?: string;
+  genre?: string;
+  rating?: number;
+  priceMin?: number;
+  priceMax?: number;
+  newlyAdded?: number;
 }

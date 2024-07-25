@@ -22,3 +22,18 @@ export async function getBooks(
     next(e);
   }
 }
+
+export async function getBookById(
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    logger.info("Getting book by ID", { id: req.params.id });
+    const { id } = req.params;
+    res.status(HTTP.OK).json(await BookService.getBookById(+id));
+  } catch (e) {
+    logger.error("Error getting book by ID", { error: e });
+    next(e);
+  }
+}

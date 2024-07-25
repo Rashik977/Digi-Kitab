@@ -60,15 +60,24 @@ const readEpubMetadata = (filePath: string) =>
           path.extname(filePath)
         )}_cover.${coverItem["media-type"].split("/")[1]}`;
         coverPath = `/covers/${coverFileName}`;
-        epub.getImage(coverItem.id, (error, data, mimeType) => {
-          if (error) {
-            console.error(
-              `Failed to extract cover image for ${filePath}:`,
-              error
-            );
-          } else {
-            fs.writeFileSync(path.join(EBOOKS_COVER_DIR, coverFileName), data);
-          }
+
+        // Wrap getImage in a Promise and await it
+        await new Promise<void>((resolve, reject) => {
+          epub.getImage(coverItem.id, (error, data, mimeType) => {
+            if (error) {
+              console.error(
+                `Failed to extract cover image for ${filePath}:`,
+                error
+              );
+              reject(error);
+            } else {
+              fs.writeFileSync(
+                path.join(EBOOKS_COVER_DIR, coverFileName),
+                data
+              );
+              resolve();
+            }
+          });
         });
       }
 
