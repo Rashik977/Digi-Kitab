@@ -4,7 +4,7 @@ import * as BookService from "../Services/book.services";
 
 import loggerWithNameSpace from "../Utils/logger";
 import HTTP from "http-status-codes";
-import { getBookQuery } from "../Interfaces/Book.interface";
+import { Book, getBookQuery } from "../Interfaces/Book.interface";
 
 const logger = loggerWithNameSpace("UserController");
 
@@ -37,3 +37,54 @@ export async function getBookById(
     next(e);
   }
 }
+
+export const uploadBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const file = req.file;
+    const bookDetails: Partial<Book> = req.body;
+    logger.info("Uploading book", { file, bookDetails });
+    if (file) {
+      const result = await BookService.createBook(file, bookDetails);
+      res.status(201).json(result);
+    } else {
+      throw new Error("No file uploaded");
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateBook = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = parseInt(req.params.id);
+    const bookDetails: Partial<Book> = req.body;
+    logger.info("Updating book", { id, bookDetails });
+    const result = await BookService.updateBook(id, bookDetails);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteBook = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = parseInt(req.params.id);
+    logger.info("Deleting book", { id });
+    const result = await BookService.deleteBook(id);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};

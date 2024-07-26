@@ -1,4 +1,4 @@
-import { getBookQuery } from "../Interfaces/Book.interface";
+import { Book, getBookQuery } from "../Interfaces/Book.interface";
 import { BaseModel } from "./base.model";
 
 export class BookModel extends BaseModel {
@@ -97,5 +97,20 @@ export class BookModel extends BaseModel {
       .table("books")
       .where("id", id)
       .first();
+  }
+
+  // Function to create a book
+  static async create(book: Book) {
+    await this.queryBuilder().insert(book).table("books");
+  }
+
+  // Function to update a book
+  static async update(id: number, book: Partial<Book>) {
+    await this.queryBuilder().update(book).table("books").where({ id });
+  }
+
+  // Function to delete a book
+  static delete(id: number) {
+    return this.queryBuilder().delete().table("books").where({ id });
   }
 }

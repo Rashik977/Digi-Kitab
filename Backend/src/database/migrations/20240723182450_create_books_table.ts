@@ -18,11 +18,11 @@ export async function up(knex: Knex): Promise<void> {
     table.text("desc").nullable();
     table.integer("price").notNullable();
     table.integer("rating").nullable();
-    table.integer("totalChapters").notNullable();
+    table.integer("total_chapters").notNullable();
     table.string("category", 100).notNullable();
     table.integer("year").nullable();
     table.text("cover_path").nullable();
-    table.text("epubFilePath").notNullable();
+    table.text("epub_file_path").notNullable();
 
     table.timestamp("created_at").notNullable().defaultTo(knex.raw("now()"));
 

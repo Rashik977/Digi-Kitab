@@ -1,11 +1,6 @@
 import { verify } from "jsonwebtoken";
 import { User } from "../Interfaces/User.interface";
-import {
-  getRoleName,
-  getRolePermissions,
-  getUserByEmail,
-  getUserRoles,
-} from "./user.services";
+import { getUserByEmail } from "./user.services";
 import bcrypt from "bcryptjs";
 import config from "../config";
 import {
@@ -17,6 +12,7 @@ import {
   InternalServerError,
   UnauthorizedError,
 } from "../Error/Error";
+import { getRoleName, getRolePermissions, getUserRoles } from "./role.services";
 
 // Function to login existing user and return access and refresh tokens
 export async function login(body: Pick<User, "email" | "password">) {

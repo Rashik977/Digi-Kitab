@@ -100,10 +100,13 @@ export class UserModel extends BaseModel {
     }
 
     const query = this.queryBuilder()
-      .select("id", "email", "name")
+      .select("users.id as userId", "email", "name", "role")
       .table("users")
       .limit(size)
-      .offset((page - 1) * size);
+      .offset((page - 1) * size)
+      .join("user_roles", "users.id", "user_roles.userId")
+      .join("roles", "user_roles.roleId", "roles.id")
+      .where("roles.role", Roles.USER);
     if (q) {
       query.whereLike("name", `%${q}%`);
     }
@@ -113,7 +116,13 @@ export class UserModel extends BaseModel {
   // Function to count users
   static count(filter: getUserQuery) {
     const { q } = filter;
-    const query = this.queryBuilder().count("*").table("users").first();
+    const query = this.queryBuilder()
+      .count("*")
+      .table("users")
+      .join("user_roles", "users.id", "user_roles.userId")
+      .join("roles", "user_roles.roleId", "roles.id")
+      .where("roles.role", Roles.USER)
+      .first();
 
     if (q) {
       query.whereLike("name", `%${q}%`);
