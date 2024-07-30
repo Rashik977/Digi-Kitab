@@ -100,7 +100,7 @@ export class UserModel extends BaseModel {
     }
 
     const query = this.queryBuilder()
-      .select("users.id as userId", "email", "name", "role")
+      .select("users.id as id", "email", "name", "role")
       .table("users")
       .limit(size)
       .offset((page - 1) * size)
@@ -141,13 +141,24 @@ export class UserModel extends BaseModel {
 
   // Function to update user
   static async update(id: string, user: User, updatedBy: User) {
-    const userToUpdate = {
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      updatedAt: new Date(),
-      updatedBy: updatedBy.id,
-    };
+    let userToUpdate;
+    if (user.password === "") {
+      userToUpdate = {
+        name: user.name,
+        email: user.email,
+        updatedAt: new Date(),
+        updatedBy: updatedBy.id,
+      };
+    } else {
+      userToUpdate = {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        updatedAt: new Date(),
+        updatedBy: updatedBy.id,
+      };
+    }
+
     const query = this.queryBuilder()
       .update(userToUpdate)
       .table("users")
@@ -158,5 +169,15 @@ export class UserModel extends BaseModel {
   // Function to delete user
   static delete(id: string) {
     return this.queryBuilder().delete().table("users").where({ id });
+  }
+
+  static async getUserPassword(id: string) {
+    const query = this.queryBuilder()
+      .select("password")
+      .table("users")
+      .where({ id })
+      .first();
+
+    return await query;
   }
 }

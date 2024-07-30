@@ -11,7 +11,7 @@ export const getStaff = async (query: getUserQuery) => {
   const data = await StaffModel.StaffModel.getStaff(query);
   if (!data) throw new NotFoundError("No users found");
 
-  const count = await UserModel.UserModel.count(query);
+  const count = await StaffModel.StaffModel.count(query);
   const meta = {
     page: query.page,
     size: data.length,
@@ -47,14 +47,31 @@ export const updateStaff = async (id: number, users: User, updatedBy: User) => {
   const userRoleId = await UserModel.UserModel.getUserRoles(id);
   const userRole = await UserModel.UserModel.getRoleName(userRoleId[0].roleId);
 
+  const userEmail = await UserModel.UserModel.getUserByEmail(users.email);
+
   const user = await UserModel.UserModel.getUserById(id.toString());
 
   // Check if users exists
   if (!user) throw new NotFoundError("staff not found");
+  if (userEmail) {
+    if (userEmail.id !== id.toString()) {
+      throw new BadRequestError("Email already exists");
+    }
+  }
   if (!(userRole === Roles.STAFF))
     throw new BadRequestError("Unauthorized to update this user");
 
-  const password = await bcrypt.hash(users.password, 10);
+  let password;
+
+  if (
+    users.password === null ||
+    users.password === undefined ||
+    users.password === ""
+  ) {
+    password = "";
+  } else {
+    password = await bcrypt.hash(users.password, 10);
+  }
 
   await UserModel.UserModel.update(
     id.toString(),

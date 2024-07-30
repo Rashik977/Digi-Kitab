@@ -1,4 +1,4 @@
-import { isAuthenticated } from "./services/authServices";
+import { getUser, isAuthenticated } from "./services/authServices";
 import { match, MatchFunction } from "path-to-regexp";
 
 // Define route types
@@ -48,6 +48,39 @@ const routes: Route[] = [
       return {
         render: () => module.default.render(params!.id),
       };
+    },
+  },
+  {
+    match: match("/manageUsers"),
+    load: async () => {
+      if (!isAuthenticated() || !(getUser()?.role === "super")) {
+        window.history.pushState(null, "", "/login");
+        return import("./pages/login"); // Redirect to login page
+      }
+      return import("./pages/manageUsers");
+    },
+  },
+  {
+    match: match("/manageStaff"),
+    load: async () => {
+      if (!isAuthenticated() || !(getUser()?.role === "super")) {
+        window.history.pushState(null, "", "/login");
+        return import("./pages/login"); // Redirect to login page
+      }
+      return import("./pages/manageStaff");
+    },
+  },
+  {
+    match: match("/manageBooks"),
+    load: async () => {
+      if (
+        !isAuthenticated() ||
+        !(getUser()?.role === "super" || getUser()?.role === "staff")
+      ) {
+        window.history.pushState(null, "", "/login");
+        return import("./pages/login"); // Redirect to login page
+      }
+      return import("./pages/manageBooks");
     },
   },
 ];

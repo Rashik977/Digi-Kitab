@@ -1,7 +1,15 @@
+import { getUser, removeToken } from "../services/authServices";
 import { login } from "../services/userServices";
 import { createElement } from "../utils/createElement";
 
 export const render = () => {
+  // Function to initialize the logout logic
+  const initializeLogout = () => {
+    removeToken();
+  };
+
+  initializeLogout();
+
   const container = createElement("div", {
     className: "flex flex-col justify-center items-center h-screen",
     style:
@@ -43,8 +51,19 @@ export const render = () => {
       await login(email.value, password.value); // Perform login
 
       // Redirect to dashboard or another route upon successful login
-      window.history.pushState(null, "", "/buyBooks");
-      window.dispatchEvent(new Event("popstate")); // Trigger routing
+      if (getUser()?.role === "super") {
+        window.history.pushState(null, "", "/manageUsers");
+        window.dispatchEvent(new Event("popstate")); // Trigger routing
+      } else if (getUser()?.role === "user") {
+        window.history.pushState(null, "", "/buyBooks");
+        window.dispatchEvent(new Event("popstate")); // Trigger routing
+      } else if (getUser()?.role === "staff") {
+        window.history.pushState(null, "", "/manageBooks");
+        window.dispatchEvent(new Event("popstate")); // Trigger routing
+      } else {
+        window.history.pushState(null, "", "/404");
+        window.dispatchEvent(new Event("popstate")); // Trigger routing
+      }
     } catch (error) {
       const errorElement = form.querySelector(".error") as HTMLElement;
       errorElement.textContent = `${error}`;

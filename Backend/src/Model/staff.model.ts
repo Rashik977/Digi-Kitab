@@ -15,7 +15,7 @@ export class StaffModel extends BaseModel {
     }
 
     const query = this.queryBuilder()
-      .select("users.id as staffId", "email", "name", "role")
+      .select("users.id as id", "email", "name", "role")
       .table("users")
       .limit(size)
       .offset((page - 1) * size)
@@ -36,13 +36,13 @@ export class StaffModel extends BaseModel {
       .table("users")
       .join("user_roles", "users.id", "user_roles.userId")
       .join("roles", "user_roles.roleId", "roles.id")
-      .where("roles.role", Roles.STAFF)
-      .first();
+      .where("roles.role", Roles.STAFF);
 
     if (q) {
-      query.whereLike("name", `%${q}%`);
+      query.andWhere("users.name", "like", `%${q}%`);
     }
-    return query;
+
+    return query.first();
   }
 
   static async create(user: User, createdBy: User) {

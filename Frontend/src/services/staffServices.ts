@@ -1,28 +1,11 @@
 import { fetchWithAuth, getUser } from "./authServices";
 
-export const login = async (email: string, password: string): Promise<void> => {
-  const response = await fetch("http://localhost:3000/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (response.ok) {
-    const { accessToken, refreshToken } = await response.json();
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
-  } else {
-    const error = await response.json();
-    throw new Error(error.error.message);
-  }
-};
-
-export const register = async (
+export const createStaff = async (
   name: string,
   email: string,
   password: string
 ): Promise<void> => {
-  const response = await fetch("http://localhost:3000/users", {
+  const response = await fetchWithAuth("http://localhost:3000/staff", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password, name }),
@@ -34,24 +17,24 @@ export const register = async (
   }
 };
 
-export const updateUser = async (
+export const updateStaff = async (
   id: number,
   name: string,
   email: string,
   password: string
 ): Promise<void> => {
-  const user = getUser();
+  const Staff = getUser();
   let toUpdate;
   if (password === null || password === undefined || password === "") {
     toUpdate = { name, email };
   } else {
     toUpdate = { name, email, password };
   }
-  if (!user) {
-    throw new Error("User not authenticated");
+  if (!Staff) {
+    throw new Error("Staff not authenticated");
   }
 
-  const response = await fetchWithAuth(`http://localhost:3000/users/${id}`, {
+  const response = await fetchWithAuth(`http://localhost:3000/staff/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -65,7 +48,7 @@ export const updateUser = async (
   }
 };
 
-export const getUsers = async (
+export const getStaff = async (
   page: number,
   size: number,
   filter: {
@@ -82,7 +65,7 @@ export const getUsers = async (
   }
 
   const response = await fetchWithAuth(
-    `http://localhost:3000/users?${params.toString()}`
+    `http://localhost:3000/staff?${params.toString()}`
   );
 
   if (!response.ok) {
@@ -93,8 +76,8 @@ export const getUsers = async (
   return response.json();
 };
 
-export const deleteUser = async (id: number) => {
-  const response = await fetchWithAuth(`http://localhost:3000/users/${id}`, {
+export const deleteStaff = async (id: number) => {
+  const response = await fetchWithAuth(`http://localhost:3000/staff/${id}`, {
     method: "DELETE",
   });
 

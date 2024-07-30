@@ -1,5 +1,5 @@
 import { updateUser } from "../services/userServices";
-import { removeToken } from "../services/authServices";
+import { getUser, removeToken } from "../services/authServices";
 import { createElement } from "../utils/createElement";
 import { Navbar } from "../components/userNavigation";
 
@@ -17,7 +17,7 @@ export const render = () => {
     <h2 class="text-2xl mb-4">Update</h2>
     <input type="text" placeholder="Name" id="name" class="mb-2 p-2 border rounded w-full">
     <input type="email" placeholder="Email" id="email" class="mb-2 p-2 border rounded w-full">
-    <input type="password" placeholder="Password" id="password" class="mb-2 p-2 border rounded w-full">
+    <input type="password" placeholder="Password (Leave empty to keep password same)" id="password" class="mb-2 p-2 border rounded w-full">
     <div class="text-red-500 mt-2 hidden error"></div>
     <button type="submit" class="bg-blue-500 text-white p-2 rounded w-full">Update</button>
   `;
@@ -36,9 +36,14 @@ export const render = () => {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const user = getUser();
     try {
-      await updateUser(name.value, email.value, password.value);
-      window.history.pushState(null, "", "/dashboard");
+      if (user) {
+        await updateUser(user.id, name.value, email.value, password.value);
+      } else {
+        throw new Error("User not authenticated");
+      }
+      window.history.pushState(null, "", "/settings");
       const event = new PopStateEvent("popstate");
       dispatchEvent(event);
     } catch (error) {

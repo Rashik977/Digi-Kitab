@@ -46,14 +46,33 @@ export const updateUsers = async (id: number, users: User, updatedBy: User) => {
   const userRoleId = await UserModel.UserModel.getUserRoles(id);
   const userRole = await UserModel.UserModel.getRoleName(userRoleId[0].roleId);
 
+  const userEmail = await UserModel.UserModel.getUserByEmail(users.email);
+
   const user = await UserModel.UserModel.getUserById(id.toString());
 
   // Check if users exists
   if (!user) throw new NotFoundError("users not found");
+
+  if (userEmail) {
+    if (userEmail.id !== id.toString()) {
+      throw new BadRequestError("Email already exists");
+    }
+  }
+
   if (!(userRole === Roles.USER))
     throw new BadRequestError("Unauthorized to update this user");
 
-  const password = await bcrypt.hash(users.password, 10);
+  let password;
+
+  if (
+    users.password === null ||
+    users.password === undefined ||
+    users.password === ""
+  ) {
+    password = "";
+  } else {
+    password = await bcrypt.hash(users.password, 10);
+  }
 
   await UserModel.UserModel.update(
     id.toString(),
