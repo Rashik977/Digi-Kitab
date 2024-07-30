@@ -22,11 +22,7 @@ export const createPopup = (content: HTMLElement, onClose: () => void) => {
           { className: "text-gray-500 self-end ", onclick: onClose },
           "✖️"
         ),
-        createElement(
-          "div",
-          { className: "bg-white p-4 rounded shadow-lg" },
-          content
-        )
+        createElement("div", { className: "bg-white p-4 rounded" }, content)
       )
     )
   );

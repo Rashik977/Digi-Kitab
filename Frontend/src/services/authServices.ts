@@ -28,6 +28,13 @@ export const removeToken = () => {
   globalUser = null;
 };
 
+export const logOut = () => {
+  localStorage.clear();
+  window.history.pushState(null, "", "/login");
+  const event = new PopStateEvent("popstate");
+  dispatchEvent(event);
+};
+
 export const isAuthenticated = (): boolean => {
   return !!getToken(); // Checks if there's an access token
 };

@@ -83,6 +83,26 @@ const routes: Route[] = [
       return import("./pages/manageBooks");
     },
   },
+  {
+    match: match("/checkout"),
+    load: async () => {
+      if (!isAuthenticated()) {
+        window.history.pushState(null, "", "/login");
+        return import("./pages/login"); // Redirect to login page
+      }
+      return import("./pages/checkout");
+    },
+  },
+  {
+    match: match("/library"),
+    load: async () => {
+      if (!isAuthenticated()) {
+        window.history.pushState(null, "", "/login");
+        return import("./pages/login"); // Redirect to login page
+      }
+      return import("./pages/library");
+    },
+  },
 ];
 
 export const initRouter = () => {

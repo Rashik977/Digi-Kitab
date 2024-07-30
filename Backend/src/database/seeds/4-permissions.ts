@@ -61,6 +61,18 @@ export function seed(knex: Knex): Promise<void> {
         {
           permission: "book.delete",
         },
+        {
+          permission: "order.get",
+        },
+        {
+          permission: "order.post",
+        },
+        {
+          permission: "order.put",
+        },
+        {
+          permission: "order.delete",
+        },
       ]);
     });
 }

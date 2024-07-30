@@ -1,18 +1,14 @@
 import { createElement } from "../utils/createElement";
 import { Navbar } from "../components/userNavigation";
-import { fetchBooks } from "../services/bookServices";
-import { renderBooks } from "../components/books";
+import { fetchLibraryBooks } from "../services/libraryServices";
 import { renderPagination } from "../components/pagination";
-import { FilterComponent } from "../components/filter";
+import { renderLibraryBooks } from "../components/libraryBooks";
 
 export const render = () => {
   const main = createElement("main");
   const navigation = Navbar();
   const section = createElement("section", {
     className: "mx-auto flex gap-10",
-  });
-  const aside = createElement("aside", {
-    className: "w-1/4 lg:block",
   });
   const container = createElement("div", {
     className: "p-6 flex flex-col items-center justify-center",
@@ -46,86 +42,66 @@ export const render = () => {
   searchContainer.appendChild(searchInput);
   searchContainer.appendChild(searchButton);
 
-  const filters = {
-    category: "",
-    genre: "",
-    rating: 0,
-    priceMin: 0,
-    priceMax: 0,
-    newlyAdded: false,
-  };
-
   let currentPage = 1;
   const pageSize = 8;
   let currentQuery = "";
 
   const totalPages = async () => {
-    const { meta } = await fetchBooks(currentPage, pageSize, {
-      ...filters,
-      q: currentQuery,
-    });
+    const { meta } = await fetchLibraryBooks(
+      currentPage,
+      pageSize,
+      currentQuery
+    );
     const { total, size } = meta;
     return Math.ceil(total / size);
   };
 
-  const loadBooks = async (page: number) => {
+  const loadLibraryBooks = async (page: number) => {
     try {
-      const { data: books, meta } = await fetchBooks(page, pageSize, {
-        ...filters,
-        q: currentQuery,
-      });
+      const { data: books, meta } = await fetchLibraryBooks(
+        page,
+        pageSize,
+        currentQuery
+      );
       container.innerHTML = ""; // Clear previous content
       container.appendChild(booksContainer);
       booksContainer.innerHTML = ""; // Clear previous books
 
       // Render books
-      renderBooks(books).forEach(async (bookElement) =>
-        booksContainer.appendChild(await bookElement)
-      );
+      // Await the promise returned by renderLibraryBooks
+      const bookElements = await renderLibraryBooks(books);
+
+      // Check if bookElements is an array and append each element to the container
+      if (Array.isArray(bookElements)) {
+        bookElements.forEach((bookElement) => {
+          if (bookElement) {
+            booksContainer.appendChild(bookElement);
+          }
+        });
+      }
 
       // Render pagination
       container.appendChild(
-        renderPagination(meta.page, await totalPages(), loadBooks)
+        renderPagination(meta.page, await totalPages(), loadLibraryBooks)
       );
     } catch (error) {
-      console.error("Failed to load books:", error);
+      console.error("Failed to load library books:", error);
     }
-  };
-
-  const applyFilters = () => {
-    filters.category = (
-      document.getElementById("category") as HTMLSelectElement
-    ).value;
-    filters.genre = (
-      document.getElementById("genre") as HTMLInputElement
-    ).value;
-    filters.rating = +(document.getElementById("rating") as HTMLInputElement)
-      .value;
-    filters.priceMin = +(
-      document.getElementById("priceMin") as HTMLInputElement
-    ).value;
-    filters.priceMax = +(
-      document.getElementById("priceMax") as HTMLInputElement
-    ).value;
-
-    loadBooks(currentPage);
   };
 
   searchButton.addEventListener("click", () => {
     currentQuery = (document.getElementById("searchInput") as HTMLInputElement)
       .value;
-    loadBooks(currentPage);
+    loadLibraryBooks(currentPage);
   });
 
   main.appendChild(navigation);
   searchWrapper.appendChild(searchContainer);
   main.appendChild(searchWrapper);
-  aside.appendChild(FilterComponent(applyFilters));
-  section.appendChild(aside);
   section.appendChild(container);
   main.appendChild(section);
 
-  loadBooks(currentPage);
+  loadLibraryBooks(currentPage);
 
   return main;
 };

@@ -78,12 +78,44 @@ export function seed(knex: Knex): Promise<void> {
           permission_id: 16,
         },
         {
+          role_id: 1,
+          permission_id: 17,
+        },
+        {
+          role_id: 1,
+          permission_id: 18,
+        },
+        {
+          role_id: 1,
+          permission_id: 19,
+        },
+        {
+          role_id: 1,
+          permission_id: 20,
+        },
+        {
           role_id: 2,
           permission_id: 3,
         },
         {
           role_id: 2,
           permission_id: 13,
+        },
+        {
+          role_id: 2,
+          permission_id: 17,
+        },
+        {
+          role_id: 2,
+          permission_id: 18,
+        },
+        {
+          role_id: 2,
+          permission_id: 19,
+        },
+        {
+          role_id: 2,
+          permission_id: 20,
         },
         {
           role_id: 3,
@@ -100,6 +132,22 @@ export function seed(knex: Knex): Promise<void> {
         {
           role_id: 3,
           permission_id: 16,
+        },
+        {
+          role_id: 3,
+          permission_id: 17,
+        },
+        {
+          role_id: 3,
+          permission_id: 18,
+        },
+        {
+          role_id: 3,
+          permission_id: 19,
+        },
+        {
+          role_id: 3,
+          permission_id: 20,
         },
       ]);
     });

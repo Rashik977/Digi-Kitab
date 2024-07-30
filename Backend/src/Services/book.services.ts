@@ -59,10 +59,6 @@ export async function createBook(
     ...bookDetails,
   };
 
-  console.log("Book details:", bookDetails);
-
-  console.log(book);
-
   await BookModel.BookModel.create(book);
   return { message: "Book created" };
 }
@@ -153,3 +149,37 @@ export const deleteBook = async (id: number) => {
   await BookModel.BookModel.delete(id);
   return { message: "Book deleted" };
 };
+
+export async function rateBook(bookId: number, userId: number, rating: number) {
+  if (rating < 1 || rating > 5) {
+    throw new BadRequestError("Rating must be between 1 and 5");
+  }
+
+  const ratingExists = await BookModel.BookModel.checkRatingExists(
+    bookId,
+    userId
+  );
+
+  if (ratingExists) {
+    await BookModel.BookModel.updateRating(bookId, userId, rating);
+  } else {
+    await BookModel.BookModel.createRating(bookId, userId, rating);
+  }
+
+  const averageRating = await BookModel.BookModel.calculateAverageRating(
+    bookId
+  );
+
+  await BookModel.BookModel.updateBookRating(bookId, averageRating);
+}
+
+export async function getRating(
+  bookId: number,
+  userId: number
+): Promise<number | null> {
+  const rating = await BookModel.BookModel.getRating(bookId, userId);
+
+  if (!rating) return 0;
+
+  return rating;
+}

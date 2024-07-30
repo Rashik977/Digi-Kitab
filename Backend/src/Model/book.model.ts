@@ -114,4 +114,60 @@ export class BookModel extends BaseModel {
   static delete(id: number) {
     return this.queryBuilder().delete().table("books").where({ id });
   }
+
+  static async createRating(bookId: number, userId: number, rating: number) {
+    await this.queryBuilder()
+      .insert({ book_id: bookId, user_id: userId, rating })
+      .table("ratings");
+  }
+
+  static async calculateAverageRating(bookId: number): Promise<number> {
+    const result = await this.queryBuilder()
+      .avg("rating as averageRating")
+      .from("ratings")
+      .where({ book_id: bookId })
+      .first();
+
+    return Math.floor(result.averageRating);
+  }
+
+  static async updateBookRating(bookId: number, averageRating: number) {
+    await this.queryBuilder()
+      .update({ rating: averageRating })
+      .table("books")
+      .where({ id: bookId });
+  }
+
+  static async updateRating(bookId: number, userId: number, rating: number) {
+    await this.queryBuilder()
+      .update({ rating })
+      .table("ratings")
+      .where({ book_id: bookId, user_id: userId });
+  }
+
+  static async checkRatingExists(
+    bookId: number,
+    userId: number
+  ): Promise<boolean> {
+    const result = await this.queryBuilder()
+      .select("id")
+      .from("ratings")
+      .where({ book_id: bookId, user_id: userId })
+      .first();
+
+    return !!result;
+  }
+
+  static async getRating(
+    bookId: number,
+    userId: number
+  ): Promise<number | null> {
+    const result = await this.queryBuilder()
+      .select("rating")
+      .from("ratings")
+      .where({ book_id: bookId, user_id: userId })
+      .first();
+
+    return result ? result.rating : null;
+  }
 }

@@ -100,3 +100,39 @@ export const deleteBook = async (id: number) => {
 
   return response.json();
 };
+
+export const fetchUserRating = async (
+  bookId: number
+): Promise<number | null> => {
+  try {
+    const response = await fetchWithAuth(
+      `http://localhost:3000/books/rating/${bookId}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch user rating");
+    }
+    const data = await response.json();
+    return data.rating || null;
+  } catch (error) {
+    console.error("Error fetching user rating:", error);
+    return null;
+  }
+};
+
+export const submitRating = async (bookId: number, rating: number) => {
+  try {
+    const response = await fetchWithAuth(`http://localhost:3000/books/rate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ bookId, rating }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to submit rating");
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error submitting rating:", error);
+  }
+};

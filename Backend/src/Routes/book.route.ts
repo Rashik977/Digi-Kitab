@@ -4,6 +4,8 @@ import {
   deleteBook,
   getBookById,
   getBooks,
+  getRating,
+  rateBook,
   updateBook,
   uploadBook,
 } from "../Controller/book.controller";
@@ -54,5 +56,8 @@ bookRoutes.delete(
   validateReqParams(bookIdSchema),
   deleteBook
 );
+
+bookRoutes.post("/rate", authenticate, rateBook);
+bookRoutes.get("/rating/:bookId", authenticate, getRating);
 
 export default bookRoutes;

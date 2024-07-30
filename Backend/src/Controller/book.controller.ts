@@ -88,3 +88,56 @@ export const deleteBook = async (
     next(error);
   }
 };
+
+export const rateBook = async (
+  req: Request<{ user: { id: string } }>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { bookId, rating } = req.body;
+
+    if (!req.user) {
+      throw new Error("User not authenticated");
+    }
+    const userId = req.user.id;
+
+    logger.info("Rating book", { bookId, rating, userId });
+
+    await BookService.rateBook(bookId, parseInt(userId), rating);
+
+    res.status(200).json({ message: "Book rated successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getRating = async (
+  req: Request<{ user: { id: string }; bookId: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.user) {
+      throw new Error("User not authenticated");
+    }
+    const userId = req.user.id;
+
+    const { bookId } = req.params;
+
+    if (!bookId || !userId) {
+      throw new Error("bookId and userId are required");
+    }
+
+    logger.info("Fetching rating", { bookId, userId });
+
+    const rating = await BookService.getRating(
+      parseInt(bookId),
+      parseInt(userId)
+    );
+
+    res.status(200).json({ rating });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,32 +1,34 @@
 import { updateUser } from "../services/userServices";
-import { getUser, removeToken } from "../services/authServices";
+import { getUser } from "../services/authServices";
 import { createElement } from "../utils/createElement";
 import { Navbar } from "../components/userNavigation";
 
 export const render = () => {
-  const main = createElement("main");
+  const main = createElement("main", {
+    className: "bg-gray-100 min-h-screen flex flex-col",
+  });
   const navigation = Navbar();
   const container = createElement("div", {
-    className: "p-6 flex flex-col items-center justify-center gap-10",
+    className: "flex flex-col items-center justify-center flex-grow p-6",
   });
 
   const form = createElement("form", {
-    className: "bg-white p-6 rounded shadow-md",
+    className: "bg-white p-8 rounded-lg shadow-lg w-full md:w-1/3",
   });
   form.innerHTML = `
-    <h2 class="text-2xl mb-4">Update</h2>
-    <input type="text" placeholder="Name" id="name" class="mb-2 p-2 border rounded w-full">
-    <input type="email" placeholder="Email" id="email" class="mb-2 p-2 border rounded w-full">
-    <input type="password" placeholder="Password (Leave empty to keep password same)" id="password" class="mb-2 p-2 border rounded w-full">
+    <h2 class="text-2xl font-bold mb-4 text-center">Update</h2>
+    <div class="mb-4">
+      <input type="text" placeholder="Name" id="name" class="mt-1 p-2 border rounded w-full">
+    </div>
+    <div class="mb-4">
+      <input type="email" placeholder="Email" id="email" class="mt-1 p-2 border rounded w-full">
+    </div>
+    <div class="mb-4">
+      <input type="password" placeholder="Password (leave it empty to keep the password same)" id="password" class="mt-1 p-2 border rounded w-full">
+    </div>
     <div class="text-red-500 mt-2 hidden error"></div>
-    <button type="submit" class="bg-blue-500 text-white p-2 rounded w-full">Update</button>
+    <button type="submit" class="bg-blue-600 text-white py-2 rounded w-full hover:bg-blue-700 transition duration-300">Update</button>
   `;
-
-  const logoutButton = createElement(
-    "button",
-    { className: "bg-red-500 text-white p-2 rounded" },
-    "Logout"
-  );
 
   const name = form.querySelector("#name") as HTMLInputElement;
   const email = form.querySelector("#email") as HTMLInputElement;
@@ -60,15 +62,7 @@ export const render = () => {
     });
   });
 
-  logoutButton.addEventListener("click", () => {
-    removeToken();
-    window.history.pushState(null, "", "/login");
-    const event = new PopStateEvent("popstate");
-    dispatchEvent(event);
-  });
-
   container.appendChild(form);
-  container.appendChild(logoutButton);
   main.appendChild(navigation);
   main.appendChild(container);
 

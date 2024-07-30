@@ -2,24 +2,35 @@ import { createElement } from "../utils/createElement";
 
 export const FilterComponent = (onApplyFilters: () => void) => {
   const aside = createElement("aside", {
-    className: "w-64 p-6 bg-gray-200",
+    className: "bg-white rounded-lg shadow-md p-6 w-[250px]",
   });
 
-  const categoryHeader = createElement("h2", { className: "mb-4" }, "Category");
-  const categorySelect = createElement("select", {
-    id: "category",
-    className: "mb-4 p-2 w-full",
-  });
+  const createHeader = (text: string) =>
+    createElement("h2", { className: "text-lg font-semibold mb-3" }, text);
+  const createSelect = (id: string) =>
+    createElement("select", {
+      id,
+      className:
+        "mb-4 p-2 w-full border-2 border-gray-300 rounded-md focus:outline-none focus:border-purple-500",
+    });
+  const createInput = (id: string, placeholder: string) =>
+    createElement("input", {
+      id,
+      type: "number",
+      className:
+        "mb-4 p-2 w-full border-2 border-gray-300 rounded-md focus:outline-none focus:border-purple-500",
+      placeholder,
+    });
+
+  const categoryHeader = createHeader("Category");
+  const categorySelect = createSelect("category");
   ["All", "Fiction", "Non-Fiction"].forEach((category) => {
     const option = createElement("option", { value: category }, category);
     categorySelect.appendChild(option);
   });
 
-  const genreHeader = createElement("h2", { className: "mb-4" }, "Genre");
-  const genreSelect = createElement("select", {
-    id: "genre",
-    className: "mb-4 p-2 w-full",
-  });
+  const genreHeader = createHeader("Genre");
+  const genreSelect = createSelect("genre");
   [
     "All",
     "Romance",
@@ -34,31 +45,15 @@ export const FilterComponent = (onApplyFilters: () => void) => {
     genreSelect.appendChild(option);
   });
 
-  const ratingInput = createElement("input", {
-    id: "rating",
-    type: "number",
-    className: "mb-4 p-2 w-full",
-    placeholder: "Rating (min)",
-  });
-
-  const priceMinInput = createElement("input", {
-    id: "priceMin",
-    type: "number",
-    className: "mb-4 p-2 w-full",
-    placeholder: "Price Min",
-  });
-
-  const priceMaxInput = createElement("input", {
-    id: "priceMax",
-    type: "number",
-    className: "mb-4 p-2 w-full",
-    placeholder: "Price Max",
-  });
+  const ratingInput = createInput("rating", "Rating (min)");
+  const priceMinInput = createInput("priceMin", "Price Min");
+  const priceMaxInput = createInput("priceMax", "Price Max");
 
   const applyButton = createElement(
     "button",
     {
-      className: "p-2 bg-blue-500 text-white w-full",
+      className:
+        "p-3 bg-purple-500 text-white rounded-lg w-full hover:bg-purple-700 transition duration-300",
       onclick: onApplyFilters,
     },
     "Apply Filters"

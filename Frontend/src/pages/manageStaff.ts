@@ -29,8 +29,6 @@ export const render = async () => {
     return Math.ceil(total / size);
   };
 
-  console.log(await totalPages());
-
   const loadStaff = async (page: number) => {
     try {
       const { data: Staff, meta } = await StaffServices.getStaff(

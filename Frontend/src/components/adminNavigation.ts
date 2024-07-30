@@ -1,3 +1,4 @@
+import { logOut } from "../services/authServices";
 import { createElement } from "../utils/createElement";
 
 export const AdminNavbar = () => {
@@ -49,6 +50,7 @@ export const AdminNavbar = () => {
           href: "/",
           "data-link": "",
           className: "hover:bg-gray-700 px-3 py-2 rounded-md w-full mt-auto",
+          onclick: logOut,
         },
         "Logout"
       )
