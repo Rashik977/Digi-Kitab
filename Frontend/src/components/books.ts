@@ -15,20 +15,21 @@ const createStarRating = (rating: number) => {
   return stars;
 };
 
-const handleBuyClick = async (book: Book) => {
+const handleBuyClick = async (book: Book, buttonContainer: HTMLElement) => {
   await addToCart(book);
   showAlert("Book added to cart", () => {
-    window.location.reload();
+    buttonContainer.innerHTML = "";
+    buttonContainer.appendChild(createShowInCartButton());
   });
 };
 
-const createBuyButton = (book: Book) => {
+const createBuyButton = (book: Book, buttonContainer: HTMLElement) => {
   return createElement(
     "button",
     {
       className:
         "text-white px-4 py-2 rounded-md mt-2 hover:bg-blue-700 transition duration-300 bg-blue-500",
-      onclick: () => handleBuyClick(book),
+      onclick: () => handleBuyClick(book, buttonContainer),
     },
     "Buy"
   );
@@ -66,16 +67,17 @@ export const renderBooks = (books: Book[]) => {
   return books.map(async (book) => {
     const isInCart = isBookInCart(parseInt(book.id));
     const isInLibrary = await isBookInLibrary(book.id);
+    const buttonContainer = createElement("div");
     const button = isInLibrary
-      ? createShowInLibraryButton()
+      ? buttonContainer.append(createShowInLibraryButton())
       : isInCart
-      ? createShowInCartButton()
-      : createBuyButton(book);
+      ? buttonContainer.append(createShowInCartButton())
+      : buttonContainer.append(createBuyButton(book, buttonContainer));
     return createElement(
       "div",
       {
         className:
-          "p-4 border rounded-md shadow-md flex flex-col items-center w-[300px] h-[550px]",
+          "p-4 border rounded-md shadow-md flex flex-col items-center w-[300px] h-[550px] hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition duration-300 dark:bg-neutral-900 dark:text-white dark:border-neutral-900",
       },
       createElement(
         "a",
@@ -105,7 +107,7 @@ export const renderBooks = (books: Book[]) => {
         { className: "flex mb-3" },
         ...createStarRating(book.rating)
       ),
-      button
+      buttonContainer
     );
   });
 };

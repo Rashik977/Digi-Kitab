@@ -2,21 +2,24 @@ import { updateUser } from "../services/userServices";
 import { getUser } from "../services/authServices";
 import { createElement } from "../utils/createElement";
 import { Navbar } from "../components/userNavigation";
+import { getDarkMode, setDarkMode } from "../utils/darkMode";
 
 export const render = () => {
   const main = createElement("main", {
-    className: "bg-gray-100 min-h-screen flex flex-col",
+    className: `min-h-screen flex flex-col`,
   });
   const navigation = Navbar();
   const container = createElement("div", {
-    className: "flex flex-col items-center justify-center flex-grow p-6",
+    className:
+      "flex flex-col items-center justify-center flex-grow p-6 dark:bg-zinc-950",
   });
 
   const form = createElement("form", {
-    className: "bg-white p-8 rounded-lg shadow-lg w-full md:w-1/3",
+    className:
+      "bg-white p-8 rounded-lg shadow-lg w-full md:w-1/3 dark:bg-slate-900",
   });
   form.innerHTML = `
-    <h2 class="text-2xl font-bold mb-4 text-center">Update</h2>
+    <h2 class="text-2xl font-bold mb-4 text-center dark:text-white">Update</h2>
     <div class="mb-4">
       <input type="text" placeholder="Name" id="name" class="mt-1 p-2 border rounded w-full">
     </div>
@@ -62,7 +65,44 @@ export const render = () => {
     });
   });
 
+  const toggleContainer = createElement("div", {
+    className: "mt-8 flex items-center",
+  });
+  const toggleLabel = createElement("span", {
+    className: "text-lg mr-4 dark:text-white",
+  });
+  toggleLabel.textContent = "Dark Mode";
+
+  const toggleSwitch = createElement("div", {
+    className:
+      "relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in",
+  });
+
+  const toggleInput = createElement("input", {
+    type: "checkbox",
+    name: "toggle",
+    id: "toggle",
+    className:
+      "toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer",
+    checked: getDarkMode(),
+    onchange: (e: Event) => {
+      setDarkMode((e.target as HTMLInputElement).checked);
+    },
+  });
+
+  const toggleLabelFor = createElement("label", {
+    for: "toggle",
+    className:
+      "toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer",
+  });
+
+  toggleSwitch.appendChild(toggleInput);
+  toggleSwitch.appendChild(toggleLabelFor);
+  toggleContainer.appendChild(toggleLabel);
+  toggleContainer.appendChild(toggleSwitch);
+
   container.appendChild(form);
+  container.appendChild(toggleContainer);
   main.appendChild(navigation);
   main.appendChild(container);
 

@@ -2,13 +2,67 @@
 import { createElement } from "../utils/createElement";
 import { fetchBookById } from "../services/bookServices";
 import { Navbar } from "../components/userNavigation";
+import { Book } from "../interfaces/Book.interface";
+import { addToCart, isBookInCart } from "../services/cartServices";
+import { showAlert } from "../components/alert";
+import { isBookInLibrary } from "../services/libraryServices";
 
 export const render = async (bookId: string) => {
   const book = await fetchBookById(+bookId);
 
-  const main = createElement("main");
+  const main = createElement("main", {
+    className: "min-h-screen dark:bg-zinc-900 dark:text-white",
+  });
 
   const navigation = Navbar();
+
+  const handleBuyClick = async (book: Book, buttonContainer: HTMLElement) => {
+    await addToCart(book);
+    showAlert("Book added to cart", () => {
+      buttonContainer.innerHTML = "";
+      buttonContainer.appendChild(createShowInCartButton());
+    });
+  };
+
+  const createBuyButton = (book: Book, buttonContainer: HTMLElement) => {
+    return createElement(
+      "button",
+      {
+        className:
+          "text-white px-4 py-2 rounded-md mt-2 hover:bg-blue-700 transition duration-300 bg-blue-500",
+        onclick: () => handleBuyClick(book, buttonContainer),
+      },
+      "Buy"
+    );
+  };
+
+  const createShowInCartButton = () => {
+    return createElement(
+      "button",
+      {
+        className:
+          "bg-orange-500 text-white px-4 py-2 rounded-md mt-2 hover:bg-orange-700 transition duration-300",
+        onclick: () => {
+          window.location.href = "/checkout";
+        },
+      },
+      "Show in Cart"
+    );
+  };
+
+  const createShowInLibraryButton = () => {
+    return createElement(
+      "button",
+      {
+        className:
+          "bg-green-500 text-white px-4 py-2 rounded-md mt-2 hover:bg-green-700 transition duration-300",
+        onclick: () => {
+          window.location.href = "/library";
+        },
+      },
+      "Show in Library"
+    );
+  };
 
   const bookPage = createElement("div", {
     className:
@@ -24,6 +78,16 @@ export const render = async (bookId: string) => {
 
   `;
 
+  const isInCart = isBookInCart(parseInt(book.id));
+  const isInLibrary = await isBookInLibrary(book.id);
+  const buttonContainer = createElement("div");
+  const button = isInLibrary
+    ? buttonContainer.append(createShowInLibraryButton())
+    : isInCart
+    ? buttonContainer.append(createShowInCartButton())
+    : buttonContainer.append(createBuyButton(book, buttonContainer));
+
+  bookPage.appendChild(buttonContainer);
   main.appendChild(navigation);
   main.appendChild(bookPage);
 

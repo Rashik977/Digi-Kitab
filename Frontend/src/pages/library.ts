@@ -5,7 +5,9 @@ import { renderPagination } from "../components/pagination";
 import { renderLibraryBooks } from "../components/libraryBooks";
 
 export const render = () => {
-  const main = createElement("main");
+  const main = createElement("main", {
+    className: `min-h-screen flex flex-col dark:bg-zinc-950 dark:text-white`,
+  });
   const navigation = Navbar();
   const section = createElement("section", {
     className: "mx-auto flex gap-10",
@@ -27,7 +29,7 @@ export const render = () => {
 
   const searchButton = createElement("button", {
     className:
-      "p-2 border bg-purple-500 text-white  rounded-lg hover:bg-purple-700 transition duration-300",
+      "p-2 border bg-purple-500 text-white  rounded-lg hover:bg-purple-700 transition duration-300 dark:border-purple-700",
     innerText: "Search",
   });
 

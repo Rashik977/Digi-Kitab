@@ -91,7 +91,7 @@ const readEpubMetadata = (filePath: string) =>
         genre: genreCategory.genre,
         category: "Fiction",
         desc: epub.metadata.description,
-        epub_file_path: filePath,
+        epub_file_path: `/Fiction/${path.basename(filePath)}`,
         total_chapters: totalChapters,
         year: isNaN(publicationYear!) ? null : publicationYear, // Handle cases where the year is not a number
         price: Math.floor(Math.random() * 5) + 1,

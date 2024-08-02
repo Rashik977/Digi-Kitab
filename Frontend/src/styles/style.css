@@ -2,4 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "/node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+/* Toggle Switch */
+.toggle-checkbox:checked {
+  right: 0;
+  border-color: #4f46e5; /* Tailwind indigo-600 */
+  transition: 1s;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #4f46e5; /* Tailwind indigo-600 */
+}
+
+.toggle-label {
+  width: 2.5rem;
+  height: 1.25rem;
+  background-color: #d1d5db; /* Tailwind gray-300 */
+  border-radius: 9999px; /* Full rounded */
+  position: relative;
+  transition: background-color 0.2s ease-in;
+}
+
+.toggle-checkbox {
+  position: absolute;
+  transition: right 1s ease-in;
+  z-index: 10;
+}

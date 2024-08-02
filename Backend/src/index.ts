@@ -1,6 +1,5 @@
 import express from "express";
 import config from "./config";
-import helmet from "helmet";
 import cors from "cors";
 
 import { requestLogger } from "./Middleware/logger";
@@ -9,7 +8,6 @@ import { errorHandler } from "./Middleware/errorHandling";
 
 import swaggerUi from "swagger-ui-express";
 import swaggerSpecs from "./swaggerConfig";
-import path from "path";
 
 const app = express();
 app.use(cors());
@@ -28,6 +26,12 @@ app.use(requestLogger);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 app.use("/covers", express.static(config.book.coverPath || ""));
+app.use("/Fiction", express.static(config.book.bookFilePathFiction || ""));
+app.use(
+  "/Non-Fiction",
+  express.static(config.book.bookFilePathNonFiction || "")
+);
+app.use("/Uploads", express.static(config.book.bookFilePath || ""));
 
 // Add routes
 app.use(router);

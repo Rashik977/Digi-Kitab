@@ -77,4 +77,27 @@ export class LibraryModel extends BaseModel {
       .innerJoin("orders", "orders.id", "order_items.order_id")
       .where("orders.user_id", userId);
   }
+
+  static async getLibraryById(userId: number, bookId: number) {
+    return this.queryBuilder()
+      .select(
+        "books.id",
+        "books.title",
+        "books.author",
+        "books.genre",
+        "books.price",
+        "books.rating",
+        "books.category",
+        "books.year",
+        "books.cover_path",
+        "books.desc",
+        "epub_file_path"
+      )
+      .table("books")
+      .innerJoin("order_items", "order_items.book_id", "books.id")
+      .innerJoin("orders", "orders.id", "order_items.order_id")
+      .where("orders.user_id", userId)
+      .andWhere("books.id", bookId)
+      .first();
+  }
 }

@@ -2,11 +2,15 @@ import { createElement } from "../utils/createElement";
 
 export const FilterComponent = (onApplyFilters: () => void) => {
   const aside = createElement("aside", {
-    className: "bg-white rounded-lg shadow-md p-6 w-[250px]",
+    className: "bg-white rounded-lg shadow-md p-6 w-[250px] dark:bg-slate-900",
   });
 
   const createHeader = (text: string) =>
-    createElement("h2", { className: "text-lg font-semibold mb-3" }, text);
+    createElement(
+      "h2",
+      { className: "text-lg font-semibold mb-3 dark:text-white" },
+      text
+    );
   const createSelect = (id: string) =>
     createElement("select", {
       id,

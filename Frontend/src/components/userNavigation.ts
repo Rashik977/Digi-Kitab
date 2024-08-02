@@ -47,7 +47,10 @@ export const Navbar = () => {
 
   return createElement(
     "nav",
-    { className: "bg-white text-gray-800 shadow-md" },
+    {
+      className:
+        "bg-white dark:bg-black dark:text-white text-gray-800 shadow-md",
+    },
     createElement(
       "div",
       { className: "container mx-auto flex items-center justify-between p-4" },
@@ -96,8 +99,7 @@ export const Navbar = () => {
           createElement("img", {
             src: "/icons/shop.png",
             className:
-              "h-6 transition duration-300 group-hover:opacity-80 filter invert",
-            style: "filter: brightness(0) saturate(100%);", // This makes the icon black
+              "h-6 transition duration-300 group-hover:opacity-80 brightness-100 invert dark:brightness-0 dark:invert ",
           }),
           createElement("span", {
             className:
@@ -124,8 +126,7 @@ export const Navbar = () => {
             createElement("img", {
               src: "/icons/user.png",
               className:
-                "h-8 w-8 rounded-full object-cover transition duration-300 group-hover:ring-2 group-hover:ring-purple-600",
-              style: "filter: brightness(0) saturate(100%);", // Make default icon black if no user image
+                "h-8 w-8 rounded-full object-cover transition duration-300 group-hover:ring-2 group-hover:ring-purple-600 brightness-100 invert dark:brightness-0 dark:invert",
             })
           ),
           createDropdown()

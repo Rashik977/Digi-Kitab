@@ -9,4 +9,5 @@ export interface Book {
   year: number;
   coverPath: string;
   desc: string;
+  epubFilePath: string;
 }

@@ -23,6 +23,7 @@ const config = {
     bookFilePathFiction: process.env.BOOK_FILE_PATH_FICTION,
     bookFilePathNonFiction: process.env.BOOK_FILE_PATH_NON_FICTION,
     bookFilePath: process.env.BOOK_FILE_PATH,
+    baseFilePath: process.env.BOOK_FILE_BASE,
   },
 };
 

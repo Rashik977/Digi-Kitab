@@ -103,6 +103,20 @@ const routes: Route[] = [
       return import("./pages/library");
     },
   },
+  {
+    match: match("/library/:id/chapter/:chapterId"),
+    load: async (params) => {
+      const module = await import("./pages/bookReading");
+      console.log(params);
+      return {
+        render: () => module.render(parseInt(params!.id), params!.chapterId),
+      };
+    },
+  },
+  {
+    match: match("/404"),
+    load: () => import("./pages/notFound"),
+  },
 ];
 
 export const initRouter = () => {

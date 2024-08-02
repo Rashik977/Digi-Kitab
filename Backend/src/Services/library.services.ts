@@ -1,7 +1,10 @@
+import path from "path";
+import fs from "fs";
 import { NotFoundError } from "../Error/Error";
 import { getBookQuery } from "../Interfaces/Book.interface";
 import * as LibraryModel from "../Model/library.model";
 import config from "../config";
+import EPub from "epub";
 
 // Get all users
 export const getLibrary = async (userId: number, query: getBookQuery) => {
@@ -10,6 +13,9 @@ export const getLibrary = async (userId: number, query: getBookQuery) => {
   for (const book of data) {
     book.coverPath = encodeURI(
       `http://localhost:${config.port}${book.coverPath}`
+    );
+    book.epubFilePath = encodeURI(
+      `http://localhost:${config.port}${book.epubFilePath}`
     );
   }
 
@@ -37,4 +43,81 @@ export const getAllLibraryBooks = async (userId: number) => {
   if (!data) throw new NotFoundError("No books found");
 
   return data;
+};
+
+export const getChapterContentService = async (
+  userId: number,
+  bookId: number,
+  chapterId: string
+) => {
+  const book = await LibraryModel.LibraryModel.getLibraryById(userId, bookId);
+  if (!book) throw new Error("Book not found");
+
+  const epubFilePath = book.epubFilePath;
+  if (!config.book.baseFilePath) throw new Error("Base file path not found");
+  const fullPath = path.join(config.book.baseFilePath, epubFilePath);
+
+  if (!fs.existsSync(fullPath)) throw new Error("EPUB file not found");
+
+  return new Promise<{
+    title: string;
+    author: string;
+    chapter: { id: string; title: string; content: string };
+  }>((resolve, reject) => {
+    const epub = new EPub(fullPath);
+
+    epub.on("end", () => {
+      epub.getChapter(chapterId, (error, text) => {
+        if (error) return reject(error);
+
+        const chapter = {
+          id: chapterId,
+          title: "", // Title needs to be fetched, might be part of the EPUB metadata or other means
+          content: text,
+        };
+
+        resolve({
+          title: book.title,
+          author: book.author,
+          chapter,
+        });
+      });
+    });
+
+    epub.on("error", reject);
+    epub.parse();
+  });
+};
+
+export const getBookChaptersService = async (userId: number, bookId: number) => {
+  const book = await LibraryModel.LibraryModel.getLibraryById(userId, bookId);
+  if (!book) throw new Error("Book not found");
+
+  const epubFilePath = book.epubFilePath;
+  if (!config.book.baseFilePath) throw new Error("Base file path not found");
+  const fullPath = path.join(config.book.baseFilePath, epubFilePath);
+
+  if (!fs.existsSync(fullPath)) throw new Error("EPUB file not found");
+
+  return new Promise<{ title: string; author: string; chapters: { id: string; title: string }[] }>(
+    (resolve, reject) => {
+      const epub = new EPub(fullPath);
+
+      epub.on("end", () => {
+        const chapters = epub.flow.map((chapter) => ({
+          id: chapter.id,
+          title: chapter.title,
+        }));
+
+        resolve({
+          title: book.title,
+          author: book.author,
+          chapters,
+        });
+      });
+
+      epub.on("error", reject);
+      epub.parse();
+    }
+  );
 };

@@ -10,7 +10,9 @@ import { Navbar } from "../components/userNavigation";
 export const render = async () => {
   const cartItems = await getCartItems();
 
-  const main = createElement("main");
+  const main = createElement("main", {
+    className: "min-h-screen dark:bg-zinc-900 dark:text-white",
+  });
   const navigation = Navbar();
 
   const removeItem = async (bookId: number) => {

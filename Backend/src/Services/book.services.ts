@@ -117,7 +117,7 @@ async function extractMetadata(filePath: string) {
         genre: "",
         category: "",
         desc: epub.metadata.description,
-        epubFilePath: filePath,
+        epubFilePath: `/Uploads/${path.basename(filePath)}`,
         totalChapters,
         year: isNaN(publicationYear!) ? null : publicationYear,
         price: 1,
