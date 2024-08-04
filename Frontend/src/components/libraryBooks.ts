@@ -2,7 +2,11 @@ import { Book } from "../interfaces/Book.interface";
 import { createElement } from "../utils/createElement";
 import { fetchUserRating, submitRating } from "../services/bookServices";
 import { render } from "../pages/bookReading";
-import { fetchBookChapters } from "../services/libraryServices";
+import {
+  fetchBookChapters,
+  fetchCurrentChapterId,
+  fetchReadingTime,
+} from "../services/libraryServices";
 
 const createStarRating = (bookId: number, initialRating: number | null) => {
   const starContainer = createElement("div", { className: "flex" });
@@ -44,8 +48,28 @@ const updateStars = (container: HTMLElement, rating: number) => {
 export const renderLibraryBooks = (books: Book[]) => {
   return Promise.all(
     books.map(async (book) => {
-      const loadChapter = await fetchBookChapters(+book.id);
+      const loadChapter = await fetchCurrentChapterId(+book.id);
+      const chapters = await fetchBookChapters(+book.id);
+      const chapterIndex = chapters.chapters.findIndex(
+        (chapter: any) => chapter.id === loadChapter.chapterId
+      );
+      console.log(chapterIndex);
       const initialRating = await fetchUserRating(+book.id);
+
+      // Calculate progress
+      const progress = ((chapterIndex + 1) / chapters.chapters.length) * 100;
+
+      // Create progress bar element
+      const progressBar = createElement("div", {
+        className: "w-full bg-gray-200 rounded-full h-2.5 my-4",
+      });
+
+      const progressFill = createElement("div", {
+        className: "bg-purple-500 h-2.5 rounded-full",
+        style: `width: ${progress}%;`,
+      });
+
+      progressBar.appendChild(progressFill);
 
       return createElement(
         "div",
@@ -56,20 +80,20 @@ export const renderLibraryBooks = (books: Book[]) => {
         createElement(
           "a",
           {
-            href: `/library/${book.id}/chapter/${loadChapter.chapters[0].id}`,
+            href: `/library/${book.id}/chapter/${loadChapter.chapterId}`,
             "data-link": "true",
             onclick: async (event: Event) => {
               event.preventDefault();
               window.history.pushState(
                 {},
                 "",
-                `/library/${book.id}/chapter/${loadChapter.chapters[0].id}`
+                `/library/${book.id}/chapter/${loadChapter.chapterId}`
               );
               const bookReadingPage = document.getElementById("app");
               if (bookReadingPage) {
                 bookReadingPage.innerHTML = "";
                 bookReadingPage.appendChild(
-                  await render(+book.id, loadChapter.chapters[0].id)
+                  await render(+book.id, loadChapter.chapterId)
                 );
               }
             },
@@ -91,6 +115,12 @@ export const renderLibraryBooks = (books: Book[]) => {
           `by ${book.author}`
         ),
         createStarRating(+book.id, initialRating),
+        progressBar,
+        createElement(
+          "p",
+          { className: "text-sm text-gray-700" },
+          `Time Read: ${await fetchReadingTime(+book.id)} mins`
+        ),
         createElement("img", {
           className: "h-8 w-auto mt-4 dark:hover:invert",
           src: "/icons/download.png",

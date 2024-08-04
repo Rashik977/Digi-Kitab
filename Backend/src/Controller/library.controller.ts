@@ -97,3 +97,133 @@ export async function getBookChapters(
     next(e);
   }
 }
+
+export async function setCurrentChapterId(
+  req: Request<{ bookId: string }, any, { chapterId: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { bookId } = req.params;
+    const { chapterId } = req.body;
+    const { user } = req;
+    if (!user) throw new Error("User not found");
+
+    logger.info(`Setting current chapter for book ${bookId} to ${chapterId}`);
+    await LibraryService.setCurrentChapterId(
+      parseInt(user.id),
+      parseInt(bookId),
+      chapterId
+    );
+
+    res.status(200).json({ message: "Current chapter set" });
+  } catch (e) {
+    logger.error(
+      `Error setting current chapter for book ${req.params.bookId}`,
+      {
+        error: e,
+      }
+    );
+    next(e);
+  }
+}
+
+export async function getCurrentChapterId(
+  req: Request<{ bookId: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { bookId } = req.params;
+    const { user } = req;
+    if (!user) throw new Error("User not found");
+
+    logger.info(`Getting current chapter for book ${bookId}`);
+    const currentChapter = await LibraryService.getCurrentChapterId(
+      parseInt(user.id),
+      parseInt(bookId)
+    );
+
+    res.status(200).json(currentChapter);
+  } catch (e) {
+    logger.error(
+      `Error getting current chapter for book ${req.params.bookId}`,
+      {
+        error: e,
+      }
+    );
+    next(e);
+  }
+}
+
+export async function startSession(
+  req: Request<{ bookId: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { bookId } = req.params;
+    const { user } = req;
+    if (!user) throw new Error("User not found");
+
+    logger.info(`Starting session for book ${bookId}`);
+    await LibraryService.startSession(parseInt(user.id), parseInt(bookId));
+
+    res.status(200).json({ message: "Session started" });
+  } catch (e) {
+    logger.error(`Error starting session for book ${req.params.bookId}`, {
+      error: e,
+    });
+    next(e);
+  }
+}
+
+export async function endSession(
+  req: Request<{ bookId: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { bookId } = req.params;
+    const { user } = req;
+    if (!user) throw new Error("User not found");
+
+    logger.info(`Ending session for book ${bookId}`);
+    await LibraryService.endSession(parseInt(user.id), parseInt(bookId));
+
+    res.status(200).json({ message: "Session ended" });
+  } catch (e) {
+    logger.error(`Error ending session for book ${req.params.bookId}`, {
+      error: e,
+    });
+    next(e);
+  }
+}
+
+export async function getTotalReadingTime(
+  req: Request<{ bookId: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { bookId } = req.params;
+    const { user } = req;
+    if (!user) throw new Error("User not found");
+
+    logger.info(`Getting total reading time for book ${bookId}`);
+    const totalReadingTime = await LibraryService.getTotalReadingTime(
+      parseInt(user.id),
+      parseInt(bookId)
+    );
+
+    res.status(200).json(totalReadingTime);
+  } catch (e) {
+    logger.error(
+      `Error getting total reading time for book ${req.params.bookId}`,
+      {
+        error: e,
+      }
+    );
+    next(e);
+  }
+}

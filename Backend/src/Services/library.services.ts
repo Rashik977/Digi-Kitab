@@ -89,7 +89,10 @@ export const getChapterContentService = async (
   });
 };
 
-export const getBookChaptersService = async (userId: number, bookId: number) => {
+export const getBookChaptersService = async (
+  userId: number,
+  bookId: number
+) => {
   const book = await LibraryModel.LibraryModel.getLibraryById(userId, bookId);
   if (!book) throw new Error("Book not found");
 
@@ -99,25 +102,88 @@ export const getBookChaptersService = async (userId: number, bookId: number) => 
 
   if (!fs.existsSync(fullPath)) throw new Error("EPUB file not found");
 
-  return new Promise<{ title: string; author: string; chapters: { id: string; title: string }[] }>(
-    (resolve, reject) => {
-      const epub = new EPub(fullPath);
+  return new Promise<{
+    title: string;
+    author: string;
+    chapters: { id: string; title: string }[];
+  }>((resolve, reject) => {
+    const epub = new EPub(fullPath);
 
-      epub.on("end", () => {
-        const chapters = epub.flow.map((chapter) => ({
-          id: chapter.id,
-          title: chapter.title,
-        }));
+    epub.on("end", () => {
+      const chapters = epub.flow.map((chapter) => ({
+        id: chapter.id,
+        title: chapter.title,
+      }));
 
-        resolve({
-          title: book.title,
-          author: book.author,
-          chapters,
-        });
+      resolve({
+        title: book.title,
+        author: book.author,
+        chapters,
       });
+    });
 
-      epub.on("error", reject);
-      epub.parse();
-    }
+    epub.on("error", reject);
+    epub.parse();
+  });
+};
+
+export const setCurrentChapterId = async (
+  userId: number,
+  bookId: number,
+  chapterId: string
+) => {
+  const checkCurrentChapter =
+    await LibraryModel.LibraryModel.getCurrentChapterId(userId, bookId);
+
+  if (!checkCurrentChapter) {
+    await LibraryModel.LibraryModel.setCurrentChapterId(
+      userId,
+      bookId,
+      chapterId
+    );
+  } else {
+    await LibraryModel.LibraryModel.updateCurrentChapterId(
+      userId,
+      bookId,
+      chapterId
+    );
+  }
+};
+
+export const getCurrentChapterId = async (userId: number, bookId: number) => {
+  const currentChapter = await LibraryModel.LibraryModel.getCurrentChapterId(
+    userId,
+    bookId
   );
+
+  if (!currentChapter) throw new NotFoundError("Current chapter not found");
+  return currentChapter;
+};
+
+export const startSession = async (userId: number, bookId: number) => {
+  await LibraryModel.LibraryModel.startSession(userId, bookId);
+};
+
+export const endSession = async (userId: number, bookId: number) => {
+  await LibraryModel.LibraryModel.endSession(userId, bookId);
+};
+
+export const getTotalReadingTime = async (userId: number, bookId: number) => {
+  const sessions = await LibraryModel.LibraryModel.getTotalReadingTime(
+    userId,
+    bookId
+  );
+  if (!sessions) throw new NotFoundError("Reading time not found");
+
+  console.log(sessions);
+
+  // Calculate the total reading time in minutes
+  let totalReadingTime = 0;
+  sessions.forEach((session: { startTime: Date; endTime: Date }) => {
+    const startTime = new Date(session.startTime);
+    const endTime = session.endTime ? new Date(session.endTime) : new Date();
+    totalReadingTime += (endTime.getTime() - startTime.getTime()) / (1000 * 60); // Convert milliseconds to minutes
+  });
+
+  return Math.floor(totalReadingTime);
 };

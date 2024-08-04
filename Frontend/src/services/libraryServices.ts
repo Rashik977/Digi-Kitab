@@ -74,3 +74,85 @@ export const fetchChapterContent = async (
   }
   return response.json();
 };
+
+export const fetchCurrentChapterId = async (bookId: number) => {
+  const response = await fetchWithAuth(
+    `http://localhost:3000/library/${bookId}/current-chapter`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch current chapter");
+  }
+  return response.json();
+};
+
+export const setCurrentChapterId = async (
+  bookId: number,
+  chapterId: string
+) => {
+  const response = await fetchWithAuth(
+    `http://localhost:3000/library/${bookId}/current-chapter`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ chapterId }),
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to set current chapter");
+  }
+  return response.json();
+};
+
+export const startSession = async (bookId: number) => {
+  const response = await fetchWithAuth(
+    `http://localhost:3000/library/${bookId}/start-session`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to start session");
+  }
+};
+
+export const endSession = async (bookId: number) => {
+  const response = await fetchWithAuth(
+    `http://localhost:3000/library/${bookId}/end-session`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to end session");
+  }
+};
+
+export const fetchReadingTime = async (bookId: number) => {
+  const response = await fetchWithAuth(
+    `http://localhost:3000/library/${bookId}/reading-time`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch reading time");
+  }
+  return response.json();
+};

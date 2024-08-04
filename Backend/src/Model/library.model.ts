@@ -1,3 +1,4 @@
+import knex from "knex";
 import { getBookQuery } from "../Interfaces/Book.interface";
 import { BaseModel } from "./base.model";
 
@@ -24,7 +25,8 @@ export class LibraryModel extends BaseModel {
         "books.year",
         "books.cover_path",
         "books.desc",
-        "epub_file_path"
+        "epub_file_path",
+        "total_chapters"
       )
       .table("books")
       .innerJoin("order_items", "order_items.book_id", "books.id")
@@ -99,5 +101,73 @@ export class LibraryModel extends BaseModel {
       .where("orders.user_id", userId)
       .andWhere("books.id", bookId)
       .first();
+  }
+
+  static async getCurrentChapterId(userId: number, bookId: number) {
+    return this.queryBuilder()
+      .select("chapter_id")
+      .table("reading_progress")
+      .where("user_id", userId)
+      .andWhere("book_id", bookId)
+      .first();
+  }
+
+  static async setCurrentChapterId(
+    userId: number,
+    bookId: number,
+    chapterId: string
+  ) {
+    return this.queryBuilder().table("reading_progress").insert({
+      user_id: userId,
+      book_id: bookId,
+      chapter_id: chapterId,
+    });
+  }
+
+  static async updateCurrentChapterId(
+    userId: number,
+    bookId: number,
+    chapterId: string
+  ) {
+    return this.queryBuilder()
+      .table("reading_progress")
+      .where("user_id", userId)
+      .andWhere("book_id", bookId)
+      .update({ chapter_id: chapterId });
+  }
+
+  static async startSession(userId: number, bookId: number) {
+    await this.queryBuilder().table("reading_session").insert({
+      user_id: userId,
+      book_id: bookId,
+    });
+  }
+
+  static async endSession(userId: number, bookId: number) {
+    // Find the most recent session for the user and book
+    const [latestSession] = await this.queryBuilder()
+      .select("id") // Assuming the table has a primary key column named 'id'
+      .from("reading_session")
+      .where({ user_id: userId, book_id: bookId })
+      .orderBy("start_time", "desc") // Order by the start_time descending
+      .limit(1);
+
+    if (latestSession) {
+      // Update the end_time of the most recent session
+      await this.queryBuilder()
+        .table("reading_session")
+        .where({ id: latestSession.id })
+        .update({ end_time: this.queryBuilder().fn.now() });
+    }
+  }
+
+  static async getTotalReadingTime(userId: number, bookId: number) {
+    const sessions = await this.queryBuilder()
+      .select("start_time", "end_time")
+      .from("reading_session")
+      .where("user_id", userId)
+      .andWhere("book_id", bookId);
+
+    return sessions;
   }
 }

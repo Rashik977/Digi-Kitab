@@ -1,8 +1,12 @@
 import { createElement } from "../utils/createElement";
 import {
+  endSession,
   fetchBookChapters,
   fetchChapterContent,
+  setCurrentChapterId,
+  startSession,
 } from "../services/libraryServices";
+import { darkModeToggle } from "../components/darkModeToggle";
 
 const renderChapterList = (
   bookId: number,
@@ -43,6 +47,7 @@ const renderChapterList = (
 
     chapterLink.addEventListener("click", async (event) => {
       event.preventDefault();
+      setCurrentChapterId(bookId, chapter.id);
       window.history.pushState(null, "", chapterLink.getAttribute("href"));
       const chapterContent = await fetchChapterContent(bookId, chapter.id);
       renderChapterContent(chapterContent.chapter);
@@ -64,9 +69,7 @@ const renderChapterContent = (chapter: {
   content: string;
 }) => {
   {
-    console.log(chapter);
     const contentContainer = document.getElementById("chapter-content");
-    console.log(contentContainer);
     if (contentContainer) {
       contentContainer.innerHTML = `
       <h2 class="text-2xl font-bold mb-4">${chapter.title}</h2>
@@ -113,6 +116,9 @@ export const render = async (bookId: number, chapterId: string) => {
       "book-reading-container min-h-screen bg-gray-50 relative dark:bg-black dark:text-white",
   });
 
+  // Start session when the book is opened
+  await startSession(bookId);
+
   const topBar = createElement("div", {
     className:
       "bg-white shadow-md py-4 px-20 flex justify-between dark:bg-stone-900",
@@ -131,7 +137,8 @@ export const render = async (bookId: number, chapterId: string) => {
     "button",
     {
       className: "text-gray-700 hover:text-gray-900",
-      onclick: () => {
+      onclick: async () => {
+        await endSession(bookId); // End session when navigating to the library
         window.location.href = "/library";
       },
     },
@@ -153,10 +160,21 @@ export const render = async (bookId: number, chapterId: string) => {
     id: "chapter-content",
     className: "chapter-content p-6 md:ml-64 w-[1000px]",
   });
+
+  const darkMode = darkModeToggle();
   topBar.appendChild(toggleButton);
+  topBar.appendChild(darkMode);
   topBar.appendChild(library);
   mainContainer.appendChild(topBar);
   mainContainer.appendChild(contentContainer);
+
+  // Add beforeunload event listener to end session on tab close
+  window.addEventListener("beforeunload", async (event) => {
+    await endSession(bookId);
+    // Optionally, prevent the default unload behavior
+    // event.preventDefault();
+    // event.returnValue = '';
+  });
 
   try {
     const { chapters } = await fetchBookChapters(bookId);
@@ -205,6 +223,7 @@ export const render = async (bookId: number, chapterId: string) => {
           bookId,
           prevChapterId
         );
+        setCurrentChapterId(bookId, prevChapterId);
         renderChapterContent(prevChapterContent.chapter);
         updateNavigationButtons(bookId, chapters, prevChapterId);
         window.history.pushState(
@@ -222,6 +241,7 @@ export const render = async (bookId: number, chapterId: string) => {
           bookId,
           nextChapterId
         );
+        setCurrentChapterId(bookId, nextChapterId);
         renderChapterContent(nextChapterContent.chapter);
         updateNavigationButtons(bookId, chapters, nextChapterId);
         window.history.pushState(

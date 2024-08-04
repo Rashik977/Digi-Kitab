@@ -1,5 +1,6 @@
 import { Book } from "../interfaces/Book.interface";
 import { fetchWithAuth } from "./authServices";
+import { fetchBookChapters, setCurrentChapterId } from "./libraryServices";
 
 const CART_STORAGE_KEY = "cart";
 
@@ -48,6 +49,11 @@ export const placeOrder = async () => {
   if (!response.ok) {
     throw new Error("Failed to place order");
   }
+
+  orderItems.forEach(async (item) => {
+    const firstChapter = await fetchBookChapters(+item.bookId);
+    await setCurrentChapterId(+item.bookId, firstChapter.chapters[0].id);
+  });
 
   // Clear the cart after successful order
   localStorage.removeItem(CART_STORAGE_KEY);
