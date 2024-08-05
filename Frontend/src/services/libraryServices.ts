@@ -1,7 +1,7 @@
 import { Book } from "../interfaces/Book.interface";
-import { ReadingStats } from "../interfaces/ReadingStats";
 import { fetchWithAuth } from "./authServices";
 
+// function to fetch library books with pagination
 export const fetchLibraryBooks = async (
   page: number,
   size: number,
@@ -20,7 +20,7 @@ export const fetchLibraryBooks = async (
   }
 
   const response = await fetchWithAuth(
-    `http://localhost:3000/library?${params.toString()}`
+    `${import.meta.env.VITE_BACKEND_URL}/library?${params.toString()}`
   );
   if (!response.ok) {
     throw new Error("Failed to fetch library books");
@@ -28,22 +28,27 @@ export const fetchLibraryBooks = async (
   return response.json();
 };
 
+// function to fetch all library books without pagination
 export const fetchAllLibraryBooks = async (): Promise<Book[]> => {
-  const response = await fetchWithAuth(`http://localhost:3000/library/all`);
+  const response = await fetchWithAuth(
+    `${import.meta.env.VITE_BACKEND_URL}/library/all`
+  );
   if (!response.ok) {
     throw new Error("Failed to fetch all library books");
   }
   return response.json();
 };
 
+// Check if a book is in the library
 export const isBookInLibrary = async (bookId: string): Promise<boolean> => {
   const libraryBooks = await fetchAllLibraryBooks();
   return libraryBooks.some((book) => book.id === bookId);
 };
 
+// Get all chapters of a book
 export const fetchBookChapters = async (bookId: number) => {
   const response = await fetchWithAuth(
-    `http://localhost:3000/library/${bookId}/chapters`,
+    `${import.meta.env.VITE_BACKEND_URL}/library/${bookId}/chapters`,
     {
       method: "GET",
       headers: {
@@ -57,12 +62,13 @@ export const fetchBookChapters = async (bookId: number) => {
   return response.json();
 };
 
+// Get chapter content
 export const fetchChapterContent = async (
   bookId: number,
   chapterId: string
 ) => {
   const response = await fetchWithAuth(
-    `http://localhost:3000/library/${bookId}/${chapterId}`,
+    `${import.meta.env.VITE_BACKEND_URL}/library/${bookId}/${chapterId}`,
     {
       method: "GET",
       headers: {
@@ -76,9 +82,10 @@ export const fetchChapterContent = async (
   return response.json();
 };
 
+// Get the current chapter of a book that the user is reading
 export const fetchCurrentChapterId = async (bookId: number) => {
   const response = await fetchWithAuth(
-    `http://localhost:3000/library/${bookId}/current-chapter`,
+    `${import.meta.env.VITE_BACKEND_URL}/library/${bookId}/current-chapter`,
     {
       method: "GET",
       headers: {
@@ -92,12 +99,13 @@ export const fetchCurrentChapterId = async (bookId: number) => {
   return response.json();
 };
 
+// Set the current chapter of a book that the user is reading
 export const setCurrentChapterId = async (
   bookId: number,
   chapterId: string
 ) => {
   const response = await fetchWithAuth(
-    `http://localhost:3000/library/${bookId}/current-chapter`,
+    `${import.meta.env.VITE_BACKEND_URL}/library/${bookId}/current-chapter`,
     {
       method: "POST",
       headers: {
@@ -110,71 +118,4 @@ export const setCurrentChapterId = async (
     throw new Error("Failed to set current chapter");
   }
   return response.json();
-};
-
-export const startSession = async (bookId: number) => {
-  const response = await fetchWithAuth(
-    `http://localhost:3000/library/${bookId}/start-session`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  if (!response.ok) {
-    throw new Error("Failed to start session");
-  }
-};
-
-export const endSession = async (bookId: number) => {
-  const response = await fetchWithAuth(
-    `http://localhost:3000/library/${bookId}/end-session`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  if (!response.ok) {
-    throw new Error("Failed to end session");
-  }
-};
-
-export const fetchReadingTime = async (bookId: number) => {
-  const response = await fetchWithAuth(
-    `http://localhost:3000/library/${bookId}/reading-time`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  if (!response.ok) {
-    throw new Error("Failed to fetch reading time");
-  }
-  return response.json();
-};
-
-export const fetchReadingStats = async (): Promise<ReadingStats[]> => {
-  try {
-    const response = await await fetchWithAuth(
-      `http://localhost:3000/library/reading-data/daily`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching reading stats:", error);
-    throw error;
-  }
 };

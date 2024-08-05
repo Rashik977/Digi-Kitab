@@ -17,6 +17,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const bookRoutes = express.Router();
 
+// Route to get all books
 bookRoutes.get(
   "/",
   authenticate,
@@ -25,6 +26,7 @@ bookRoutes.get(
   getBooks
 );
 
+// Route to get a book by ID
 bookRoutes.get(
   "/:id",
   authenticate,
@@ -33,6 +35,7 @@ bookRoutes.get(
   getBookById
 );
 
+// Route to upload a book
 bookRoutes.post(
   "/",
   authenticate,
@@ -41,6 +44,7 @@ bookRoutes.post(
   uploadBook
 );
 
+// Route to update a book
 bookRoutes.put(
   "/:id",
   authenticate,
@@ -49,6 +53,7 @@ bookRoutes.put(
   updateBook
 );
 
+// Route to delete a book
 bookRoutes.delete(
   "/:id",
   authenticate,
@@ -57,7 +62,10 @@ bookRoutes.delete(
   deleteBook
 );
 
+// Route to rate a book
 bookRoutes.post("/rate", authenticate, rateBook);
+
+// Route to get the rating of a book
 bookRoutes.get("/rating/:bookId", authenticate, getRating);
 
 export default bookRoutes;

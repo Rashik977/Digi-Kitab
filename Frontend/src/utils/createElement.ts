@@ -1,3 +1,5 @@
+// function to create an element with the given tag, props and children
+//Children can be strings or elements
 export const createElement = (
   tag: string,
   props: any = {},

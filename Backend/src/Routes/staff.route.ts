@@ -19,6 +19,8 @@ import {
 } from "../Schema/user.schema";
 
 const staffRoutes = express.Router();
+
+// Route to get all staff
 staffRoutes.get(
   "/",
   authenticate,
@@ -27,6 +29,7 @@ staffRoutes.get(
   getStaff
 );
 
+// Route to create a staff
 staffRoutes.post(
   "/",
   authenticate,
@@ -35,6 +38,7 @@ staffRoutes.post(
   createStaff
 );
 
+// Route to update a staff
 staffRoutes.put(
   "/:id",
   authenticate,
@@ -44,6 +48,7 @@ staffRoutes.put(
   updateStaff
 );
 
+// Route to delete a staff
 staffRoutes.delete(
   "/:id",
   authenticate,

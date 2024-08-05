@@ -1,5 +1,6 @@
 import { createElement } from "../utils/createElement";
 
+// Function to create a custom popup
 export const createPopup = (content: HTMLElement, onClose: () => void) => {
   const overlay = createElement(
     "div",
@@ -32,6 +33,7 @@ export const createPopup = (content: HTMLElement, onClose: () => void) => {
   return overlay;
 };
 
+// Function to close a popup
 export const closePopup = (popup: HTMLElement) => {
   document.body.removeChild(popup);
 };

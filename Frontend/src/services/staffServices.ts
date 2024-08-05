@@ -1,15 +1,19 @@
 import { fetchWithAuth, getUser } from "./authServices";
 
+// Create a new staff member
 export const createStaff = async (
   name: string,
   email: string,
   password: string
 ): Promise<void> => {
-  const response = await fetchWithAuth("http://localhost:3000/staff", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password, name }),
-  });
+  const response = await fetchWithAuth(
+    `${import.meta.env.VITE_BACKEND_URL}/staff`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, name }),
+    }
+  );
 
   if (!response.ok) {
     const error = await response.json();
@@ -17,6 +21,7 @@ export const createStaff = async (
   }
 };
 
+// Update staff member
 export const updateStaff = async (
   id: number,
   name: string,
@@ -34,13 +39,16 @@ export const updateStaff = async (
     throw new Error("Staff not authenticated");
   }
 
-  const response = await fetchWithAuth(`http://localhost:3000/staff/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(toUpdate),
-  });
+  const response = await fetchWithAuth(
+    `${import.meta.env.VITE_BACKEND_URL}/staff/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(toUpdate),
+    }
+  );
 
   if (!response.ok) {
     const error = await response.json();
@@ -48,6 +56,7 @@ export const updateStaff = async (
   }
 };
 
+// Get staff members
 export const getStaff = async (
   page: number,
   size: number,
@@ -65,7 +74,7 @@ export const getStaff = async (
   }
 
   const response = await fetchWithAuth(
-    `http://localhost:3000/staff?${params.toString()}`
+    `${import.meta.env.VITE_BACKEND_URL}/staff?${params.toString()}`
   );
 
   if (!response.ok) {
@@ -76,10 +85,14 @@ export const getStaff = async (
   return response.json();
 };
 
+// Delete staff member
 export const deleteStaff = async (id: number) => {
-  const response = await fetchWithAuth(`http://localhost:3000/staff/${id}`, {
-    method: "DELETE",
-  });
+  const response = await fetchWithAuth(
+    `${import.meta.env.VITE_BACKEND_URL}/staff/${id}`,
+    {
+      method: "DELETE",
+    }
+  );
 
   if (!response.ok) {
     const error = await response.json();

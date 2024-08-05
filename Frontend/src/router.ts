@@ -1,13 +1,13 @@
 import { getUser, isAuthenticated } from "./services/authServices";
 import { match, MatchFunction } from "path-to-regexp";
 
-// Define route types
+// create a type for Route
 type Route = {
   match: MatchFunction<object>;
   load: (params?: { [key: string]: string }) => Promise<any>;
 };
 
-// Define your routes with path-to-regexp match functions
+// Defining routes with path-to-regexp match functions
 const routes: Route[] = [
   {
     match: match("/"),
@@ -26,9 +26,9 @@ const routes: Route[] = [
     load: async () => {
       if (!isAuthenticated()) {
         window.history.pushState(null, "", "/login");
-        return import("./pages/login"); // Redirect to login page
+        return import("./pages/login");
       }
-      return import("./pages/settings");
+      return import("./pages/UserView/settings");
     },
   },
   {
@@ -36,15 +36,15 @@ const routes: Route[] = [
     load: async () => {
       if (!isAuthenticated()) {
         window.history.pushState(null, "", "/login");
-        return import("./pages/login"); // Redirect to login page
+        return import("./pages/login");
       }
-      return import("./pages/buyBooks");
+      return import("./pages/UserView/buyBooks");
     },
   },
   {
     match: match("/book/:id"),
     load: async (params) => {
-      const module = await import("./pages/bookPage");
+      const module = await import("./pages/UserView/bookPage");
       return {
         render: () => module.default.render(params!.id),
       };
@@ -55,9 +55,9 @@ const routes: Route[] = [
     load: async () => {
       if (!isAuthenticated() || !(getUser()?.role === "super")) {
         window.history.pushState(null, "", "/login");
-        return import("./pages/login"); // Redirect to login page
+        return import("./pages/login");
       }
-      return import("./pages/manageUsers");
+      return import("./pages/AdminView/manageUsers");
     },
   },
   {
@@ -65,9 +65,9 @@ const routes: Route[] = [
     load: async () => {
       if (!isAuthenticated() || !(getUser()?.role === "super")) {
         window.history.pushState(null, "", "/login");
-        return import("./pages/login"); // Redirect to login page
+        return import("./pages/login");
       }
-      return import("./pages/manageStaff");
+      return import("./pages/AdminView/manageStaff");
     },
   },
   {
@@ -78,9 +78,9 @@ const routes: Route[] = [
         !(getUser()?.role === "super" || getUser()?.role === "staff")
       ) {
         window.history.pushState(null, "", "/login");
-        return import("./pages/login"); // Redirect to login page
+        return import("./pages/login");
       }
-      return import("./pages/manageBooks");
+      return import("./pages/AdminView/manageBooks");
     },
   },
   {
@@ -88,9 +88,9 @@ const routes: Route[] = [
     load: async () => {
       if (!isAuthenticated()) {
         window.history.pushState(null, "", "/login");
-        return import("./pages/login"); // Redirect to login page
+        return import("./pages/login");
       }
-      return import("./pages/checkout");
+      return import("./pages/UserView/checkout");
     },
   },
   {
@@ -98,15 +98,15 @@ const routes: Route[] = [
     load: async () => {
       if (!isAuthenticated()) {
         window.history.pushState(null, "", "/login");
-        return import("./pages/login"); // Redirect to login page
+        return import("./pages/login");
       }
-      return import("./pages/library");
+      return import("./pages/UserView/library");
     },
   },
   {
     match: match("/library/:id/chapter/:chapterId"),
     load: async (params) => {
-      const module = await import("./pages/bookReading");
+      const module = await import("./pages/UserView/bookReading");
       return {
         render: () => module.render(parseInt(params!.id), params!.chapterId),
       };
@@ -117,9 +117,9 @@ const routes: Route[] = [
     load: async () => {
       if (!isAuthenticated()) {
         window.history.pushState(null, "", "/login");
-        return import("./pages/login"); // Redirect to login page
+        return import("./pages/login");
       }
-      return import("./pages/stats");
+      return import("./pages/UserView/stats");
     },
   },
   {
@@ -128,9 +128,11 @@ const routes: Route[] = [
   },
 ];
 
+// Initialize the router
 export const initRouter = () => {
   const container = document.getElementById("app") as HTMLElement;
 
+  // Function to navigate to a path
   const navigateTo = async (path: string) => {
     try {
       let foundRoute: Route | undefined;
@@ -167,11 +169,13 @@ export const initRouter = () => {
     }
   };
 
+  // Handle back/forward navigation
   window.addEventListener("popstate", () => {
     const path = window.location.pathname;
     navigateTo(path);
   });
 
+  // Handle link clicks
   document.addEventListener("click", (e) => {
     const target = e.target as HTMLAnchorElement;
     if (target.matches("[data-link]")) {

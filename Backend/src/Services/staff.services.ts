@@ -6,7 +6,7 @@ import { Roles } from "../Constants/Roles";
 import { BadRequestError, NotFoundError } from "../Error/Error";
 import { createUserRoles } from "./role.services";
 
-// Get all users
+// Get all staffs
 export const getStaff = async (query: getUserQuery) => {
   const data = await StaffModel.StaffModel.getStaff(query);
   if (!data) throw new NotFoundError("No users found");
@@ -20,7 +20,7 @@ export const getStaff = async (query: getUserQuery) => {
   return { data, meta };
 };
 
-// Create a new user
+// Create a new staff
 export async function createStaff(user: User, createdBy: User) {
   const existingUser = await getUserByEmail(user.email);
   if (existingUser) {
@@ -51,7 +51,6 @@ export const updateStaff = async (id: number, users: User, updatedBy: User) => {
 
   const user = await UserModel.UserModel.getUserById(id.toString());
 
-  // Check if users exists
   if (!user) throw new NotFoundError("staff not found");
   if (userEmail) {
     if (userEmail.id !== id.toString()) {
@@ -87,7 +86,7 @@ export const deleteStaff = async (id: number) => {
   const userRoleId = await UserModel.UserModel.getUserRoles(id);
   const userRole = await UserModel.UserModel.getRoleName(userRoleId[0].roleId);
   const user = await UserModel.UserModel.getUserById(id.toString());
-  // Check if users exists
+
   if (!user) throw new NotFoundError("staff not found");
 
   if (!(userRole === Roles.STAFF))

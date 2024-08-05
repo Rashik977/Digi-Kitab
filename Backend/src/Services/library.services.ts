@@ -6,7 +6,7 @@ import * as LibraryModel from "../Model/library.model";
 import config from "../config";
 import EPub from "epub";
 
-// Get all users
+// Get all books in user library with pagination
 export const getLibrary = async (userId: number, query: getBookQuery) => {
   const data = await LibraryModel.LibraryModel.getLibrary(userId, query);
 
@@ -30,7 +30,7 @@ export const getLibrary = async (userId: number, query: getBookQuery) => {
   return { data, meta };
 };
 
-// Get all library books
+// Get all library books of a user without pagination
 export const getAllLibraryBooks = async (userId: number) => {
   const data = await LibraryModel.LibraryModel.getAllLibraryBooks(userId);
 
@@ -45,6 +45,7 @@ export const getAllLibraryBooks = async (userId: number) => {
   return data;
 };
 
+// get the content of a chapter
 export const getChapterContentService = async (
   userId: number,
   bookId: number,
@@ -72,7 +73,7 @@ export const getChapterContentService = async (
 
         const chapter = {
           id: chapterId,
-          title: "", // Title needs to be fetched, might be part of the EPUB metadata or other means
+          title: "",
           content: text,
         };
 
@@ -89,6 +90,7 @@ export const getChapterContentService = async (
   });
 };
 
+// get all chapters of a book
 export const getBookChaptersService = async (
   userId: number,
   bookId: number
@@ -127,6 +129,7 @@ export const getBookChaptersService = async (
   });
 };
 
+// set the current chapter of a book
 export const setCurrentChapterId = async (
   userId: number,
   bookId: number,
@@ -150,6 +153,7 @@ export const setCurrentChapterId = async (
   }
 };
 
+// get the current chapter of a book
 export const getCurrentChapterId = async (userId: number, bookId: number) => {
   const currentChapter = await LibraryModel.LibraryModel.getCurrentChapterId(
     userId,
@@ -158,79 +162,4 @@ export const getCurrentChapterId = async (userId: number, bookId: number) => {
 
   if (!currentChapter) throw new NotFoundError("Current chapter not found");
   return currentChapter;
-};
-
-export const startSession = async (userId: number, bookId: number) => {
-  await LibraryModel.LibraryModel.startSession(userId, bookId);
-};
-
-export const endSession = async (userId: number, bookId: number) => {
-  await LibraryModel.LibraryModel.endSession(userId, bookId);
-};
-
-export const getTotalReadingTime = async (userId: number, bookId: number) => {
-  const sessions = await LibraryModel.LibraryModel.getTotalReadingTime(
-    userId,
-    bookId
-  );
-  if (!sessions) throw new NotFoundError("Reading time not found");
-
-  // Calculate the total reading time in minutes
-  let totalReadingTime = 0;
-  sessions.forEach((session: { startTime: Date; endTime: Date }) => {
-    const startTime = new Date(session.startTime);
-    const endTime = session.endTime ? new Date(session.endTime) : new Date();
-    totalReadingTime += (endTime.getTime() - startTime.getTime()) / (1000 * 60); // Convert milliseconds to minutes
-  });
-
-  return Math.floor(totalReadingTime);
-};
-
-export const getReadingTimeForPeriod = async (
-  userId: number,
-  period: "day" | "week" | "month"
-) => {
-  const now = new Date();
-  let startOfPeriod: Date;
-
-  switch (period) {
-    case "day":
-      startOfPeriod = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate()
-      );
-      break;
-    case "week":
-      startOfPeriod = new Date(now.setDate(now.getDate() - now.getDay()));
-      break;
-    case "month":
-      startOfPeriod = new Date(now.getFullYear(), now.getMonth(), 1);
-      break;
-    default:
-      throw new Error("Invalid period");
-  }
-  const sessions = await LibraryModel.LibraryModel.getReadingTimeForPeriod(
-    userId,
-    startOfPeriod,
-    now
-  );
-  if (!sessions) throw new NotFoundError("Reading time not found");
-
-  const totalMinutes = sessions.reduce((acc, session) => {
-    const startTime = new Date(session.startTime);
-    const endTime = new Date(session.endTime);
-    const duration = (endTime.getTime() - startTime.getTime()) / (1000 * 60); // duration in minutes
-    return acc + duration;
-  }, 0);
-
-  return Math.floor(totalMinutes);
-};
-
-export const getDailyReadingData = async (userId: number) => {
-  const data = await LibraryModel.LibraryModel.getDailyReadingData(userId);
-
-  if (!data) throw new NotFoundError("Reading data not found");
-
-  return data;
 };

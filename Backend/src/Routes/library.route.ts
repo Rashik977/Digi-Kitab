@@ -3,21 +3,17 @@ import { authenticate, authorize } from "../Middleware/auth.middleware";
 import { validateReqQuery } from "../Middleware/validator";
 import { getBookQuerySchema } from "../Schema/book.schema";
 import {
-  endSession,
   getAllLibraryBooks,
   getBookChapters,
   getChapterContent,
   getCurrentChapterId,
-  getDailyReadingData,
   getLibrary,
-  getTotalReadingTime,
   setCurrentChapterId,
-  startSession,
 } from "../Controller/library.controller";
-import { getMonth } from "date-fns";
 
 const libraryRoutes = express.Router();
 
+// Route to get the library books of a user paginated
 libraryRoutes.get(
   "/",
   authenticate,
@@ -26,20 +22,13 @@ libraryRoutes.get(
   getLibrary
 );
 
+// Route to get all library books
 libraryRoutes.get(
   "/all",
   authenticate,
   authorize("book.get"),
   getAllLibraryBooks
 );
-libraryRoutes.get("/reading-data/daily", authenticate, getDailyReadingData);
-
-libraryRoutes.post("/:bookId/start-session", authenticate, startSession);
-
-// Route to end a reading session
-libraryRoutes.post("/:bookId/end-session", authenticate, endSession);
-
-libraryRoutes.get("/:bookId/reading-time", authenticate, getTotalReadingTime);
 
 // Route to set the current chapter ID for a book
 libraryRoutes.post(

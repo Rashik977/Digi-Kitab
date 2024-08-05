@@ -1,6 +1,6 @@
-import { createElement } from "../utils/createElement";
-import { Navbar } from "../components/userNavigation";
-import { fetchReadingStats } from "../services/libraryServices";
+import { createElement } from "../../utils/createElement";
+import { Navbar } from "../../components/userNavigation";
+import { fetchReadingStats } from "../../services/statsServices";
 import Chart from "chart.js/auto";
 
 export const render = async () => {

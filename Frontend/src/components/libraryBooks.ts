@@ -1,13 +1,14 @@
 import { Book } from "../interfaces/Book.interface";
 import { createElement } from "../utils/createElement";
 import { fetchUserRating, submitRating } from "../services/bookServices";
-import { render } from "../pages/bookReading";
+import { render } from "../pages/UserView/bookReading";
 import {
   fetchBookChapters,
   fetchCurrentChapterId,
-  fetchReadingTime,
 } from "../services/libraryServices";
+import { fetchReadingTime } from "../services/statsServices";
 
+// Create star rating element for book rating by the user.
 const createStarRating = (bookId: number, initialRating: number | null) => {
   const starContainer = createElement("div", { className: "flex" });
 
@@ -36,6 +37,7 @@ const createStarRating = (bookId: number, initialRating: number | null) => {
   return starContainer;
 };
 
+// Update star rating based on user interaction.
 const updateStars = (container: HTMLElement, rating: number) => {
   const stars = container.children;
   for (let i = 0; i < stars.length; i++) {
@@ -45,6 +47,7 @@ const updateStars = (container: HTMLElement, rating: number) => {
   }
 };
 
+// Render library books with their progress, rating, and download button.
 export const renderLibraryBooks = (books: Book[]) => {
   return Promise.all(
     books.map(async (book) => {
@@ -114,12 +117,15 @@ export const renderLibraryBooks = (books: Book[]) => {
           `by ${book.author}`
         ),
         createStarRating(+book.id, initialRating),
+        // Progress bar
         progressBar,
+        // Time read
         createElement(
           "p",
           { className: "text-sm text-gray-700" },
           `Time Read: ${await fetchReadingTime(+book.id)} mins`
         ),
+        // Download button
         createElement("img", {
           className: "h-8 w-auto mt-4 dark:hover:invert",
           src: "/icons/download.png",

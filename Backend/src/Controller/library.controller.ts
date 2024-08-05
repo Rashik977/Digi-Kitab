@@ -6,8 +6,9 @@ import loggerWithNameSpace from "../Utils/logger";
 import HTTP from "http-status-codes";
 import { getBookQuery } from "../Interfaces/Book.interface";
 
-const logger = loggerWithNameSpace("UserController");
+const logger = loggerWithNameSpace("LibraryController");
 
+// function to get all books in the library
 export async function getLibrary(
   req: Request<any, any, any, getBookQuery>,
   res: Response,
@@ -26,6 +27,7 @@ export async function getLibrary(
   }
 }
 
+// function to get all library books
 export async function getAllLibraryBooks(
   req: Request,
   res: Response,
@@ -44,6 +46,7 @@ export async function getAllLibraryBooks(
   }
 }
 
+// function to get the content from a chapter
 export async function getChapterContent(
   req: Request<{ bookId: string; chapterId: string }>,
   res: Response,
@@ -73,6 +76,7 @@ export async function getChapterContent(
   }
 }
 
+// function to get all the book Chapters
 export async function getBookChapters(
   req: Request<{ bookId: string }>,
   res: Response,
@@ -98,6 +102,7 @@ export async function getBookChapters(
   }
 }
 
+// function to set the current chapter of a book
 export async function setCurrentChapterId(
   req: Request<{ bookId: string }, any, { chapterId: string }>,
   res: Response,
@@ -128,6 +133,7 @@ export async function setCurrentChapterId(
   }
 }
 
+// function to get the current chapter of a book
 export async function getCurrentChapterId(
   req: Request<{ bookId: string }>,
   res: Response,
@@ -156,93 +162,3 @@ export async function getCurrentChapterId(
   }
 }
 
-export async function startSession(
-  req: Request<{ bookId: string }>,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { bookId } = req.params;
-    const { user } = req;
-    if (!user) throw new Error("User not found");
-
-    logger.info(`Starting session for book ${bookId}`);
-    await LibraryService.startSession(parseInt(user.id), parseInt(bookId));
-
-    res.status(200).json({ message: "Session started" });
-  } catch (e) {
-    logger.error(`Error starting session for book ${req.params.bookId}`, {
-      error: e,
-    });
-    next(e);
-  }
-}
-
-export async function endSession(
-  req: Request<{ bookId: string }>,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { bookId } = req.params;
-    const { user } = req;
-    if (!user) throw new Error("User not found");
-
-    logger.info(`Ending session for book ${bookId}`);
-    await LibraryService.endSession(parseInt(user.id), parseInt(bookId));
-
-    res.status(200).json({ message: "Session ended" });
-  } catch (e) {
-    logger.error(`Error ending session for book ${req.params.bookId}`, {
-      error: e,
-    });
-    next(e);
-  }
-}
-
-export async function getTotalReadingTime(
-  req: Request<{ bookId: string }>,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { bookId } = req.params;
-    const { user } = req;
-    if (!user) throw new Error("User not found");
-
-    logger.info(`Getting total reading time for book ${bookId}`);
-    const totalReadingTime = await LibraryService.getTotalReadingTime(
-      parseInt(user.id),
-      parseInt(bookId)
-    );
-
-    res.status(200).json(totalReadingTime);
-  } catch (e) {
-    logger.error(
-      `Error getting total reading time for book ${req.params.bookId}`,
-      {
-        error: e,
-      }
-    );
-    next(e);
-  }
-}
-
-export async function getDailyReadingData(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { user } = req;
-    if (!user) throw new Error("User not found");
-
-    logger.info(`Getting daily reading data for user ${user.id}`);
-    const data = await LibraryService.getDailyReadingData(parseInt(user.id));
-
-    res.status(200).json(data);
-  } catch (e) {
-    logger.error(`Error getting daily reading data`, { error: e });
-    next(e);
-  }
-}

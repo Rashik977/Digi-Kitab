@@ -6,7 +6,7 @@ import path from "path";
 import fs from "fs";
 import EPub from "epub";
 
-// Get all users
+// Get all Books with pagination
 export const getBooks = async (query: getBookQuery) => {
   const data = await BookModel.BookModel.getBooks(query);
 
@@ -27,7 +27,7 @@ export const getBooks = async (query: getBookQuery) => {
   return { data, meta };
 };
 
-// Get a single book by ID
+// Get books by ID
 export const getBookById = async (id: number) => {
   const data = await BookModel.BookModel.getBookById(id);
 
@@ -150,6 +150,7 @@ export const deleteBook = async (id: number) => {
   return { message: "Book deleted" };
 };
 
+// Rate a book
 export async function rateBook(bookId: number, userId: number, rating: number) {
   if (rating < 1 || rating > 5) {
     throw new BadRequestError("Rating must be between 1 and 5");
@@ -173,6 +174,7 @@ export async function rateBook(bookId: number, userId: number, rating: number) {
   await BookModel.BookModel.updateBookRating(bookId, averageRating);
 }
 
+// Get the rating of a book
 export async function getRating(
   bookId: number,
   userId: number

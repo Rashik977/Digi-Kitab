@@ -1,6 +1,7 @@
 import { createElement } from "../utils/createElement";
 import { getDarkMode, setDarkMode } from "../utils/darkMode";
 
+// Function to create the dark mode toggle
 export const darkModeToggle = () => {
   const toggleContainer = createElement("div", {
     className: "flex items-center",

@@ -1,6 +1,7 @@
 import { Order, OrderItem } from "../Interfaces/Order.interface";
 import * as OrderModel from "../Model/order.model";
 
+// create a new order
 export async function createOrder(
   orderDetails: Partial<Order>,
   orderItems: Partial<OrderItem>[],
@@ -20,6 +21,7 @@ export async function createOrder(
   return order;
 }
 
+// get order by ID
 export async function getOrderById(orderId: number) {
   const order = await OrderModel.OrderModel.getOrderById(orderId);
   const items = await OrderModel.OrderModel.getOrderItemsByOrderId(orderId);

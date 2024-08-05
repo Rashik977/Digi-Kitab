@@ -14,17 +14,16 @@ app.use(cors());
 
 const port = config.port;
 
-// Add security headers
-// app.use(helmet());
-
 // Parse JSON
 app.use(express.json());
 
 // For logger
 app.use(requestLogger);
 
+// Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
+// Serve static files
 app.use("/covers", express.static(config.book.coverPath || ""));
 app.use("/Fiction", express.static(config.book.bookFilePathFiction || ""));
 app.use(

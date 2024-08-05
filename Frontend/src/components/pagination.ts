@@ -1,5 +1,6 @@
 import { createElement } from "../utils/createElement";
 
+// Function to render the pagination
 export const renderPagination = (
   currentPage: number,
   totalPages: number,

@@ -6,8 +6,9 @@ import loggerWithNameSpace from "../Utils/logger";
 import HTTP from "http-status-codes";
 import { Book, getBookQuery } from "../Interfaces/Book.interface";
 
-const logger = loggerWithNameSpace("UserController");
+const logger = loggerWithNameSpace("BookController");
 
+// function to get all books
 export async function getBooks(
   req: Request<any, any, any, getBookQuery>,
   res: Response,
@@ -23,6 +24,7 @@ export async function getBooks(
   }
 }
 
+// function to get book by ID
 export async function getBookById(
   req: Request<{ id: string }>,
   res: Response,
@@ -38,6 +40,7 @@ export async function getBookById(
   }
 }
 
+// function to upload a book
 export const uploadBook = async (
   req: Request,
   res: Response,
@@ -58,6 +61,7 @@ export const uploadBook = async (
   }
 };
 
+// function to update a book
 export const updateBook = async (
   req: Request<{ id: string }>,
   res: Response,
@@ -74,6 +78,7 @@ export const updateBook = async (
   }
 };
 
+// function to delete a book
 export const deleteBook = async (
   req: Request<{ id: string }>,
   res: Response,
@@ -89,6 +94,7 @@ export const deleteBook = async (
   }
 };
 
+// function to rate a book
 export const rateBook = async (
   req: Request<{ user: { id: string } }>,
   res: Response,
@@ -112,6 +118,7 @@ export const rateBook = async (
   }
 };
 
+// function to get rating of a book
 export const getRating = async (
   req: Request<{ user: { id: string }; bookId: string }>,
   res: Response,

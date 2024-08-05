@@ -1,10 +1,11 @@
 import { getUser, logOut } from "../services/authServices";
 import { createElement } from "../utils/createElement";
 
+// Navigation for the user panel
 export const Navbar = () => {
   const user = getUser();
 
-  // Function to create the dropdown menu
+  // Function to create the dropdown menu for the profile
   const createDropdown = () => {
     const dropdown = createElement(
       "div",
@@ -65,6 +66,7 @@ export const Navbar = () => {
     }
   };
 
+  // Return the navigation bar
   return createElement(
     "nav",
     {
@@ -174,6 +176,7 @@ export const Navbar = () => {
         )
       )
     ),
+    // Mobile menu
     createElement(
       "div",
       {

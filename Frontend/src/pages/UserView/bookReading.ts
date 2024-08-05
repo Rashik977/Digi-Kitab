@@ -1,13 +1,13 @@
-import { createElement } from "../utils/createElement";
+import { createElement } from "../../utils/createElement";
 import {
-  endSession,
   fetchBookChapters,
   fetchChapterContent,
   setCurrentChapterId,
-  startSession,
-} from "../services/libraryServices";
-import { darkModeToggle } from "../components/darkModeToggle";
+} from "../../services/libraryServices";
+import { darkModeToggle } from "../../components/darkModeToggle";
+import { endSession, startSession } from "../../services/statsServices";
 
+// Render the chapter list for the book
 const renderChapterList = (
   bookId: number,
   chapters: { id: string; title: string }[],
@@ -65,6 +65,7 @@ const renderChapterList = (
   return chapterListContainer;
 };
 
+// Render the chapter content
 const renderChapterContent = (chapter: {
   id: string;
   title: string;
@@ -81,6 +82,7 @@ const renderChapterContent = (chapter: {
   }
 };
 
+// Toggle the sidebar
 const toggleSidebar = () => {
   const sidebar = document.getElementById("chapter-sidebar");
   const overlay = document.getElementById("sidebar-overlay");
@@ -88,6 +90,7 @@ const toggleSidebar = () => {
   overlay?.classList.toggle("hidden");
 };
 
+// Update the navigation buttons based on the current chapter
 const updateNavigationButtons = (
   bookId: number,
   chapters: { id: string; title: string }[],

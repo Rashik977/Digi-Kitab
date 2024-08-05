@@ -3,11 +3,13 @@ import { User } from "../interfaces/User.interface";
 
 let globalUser: User | null = null;
 
+// Save the token to local storage and decode it to get the user object
 export const saveToken = (token: string) => {
   localStorage.setItem("accessToken", token);
   globalUser = jwtDecode<User>(token);
 };
 
+// Get the user object from the token
 export const getUser = (): User | null => {
   if (!globalUser) {
     const token = getToken();
@@ -18,16 +20,19 @@ export const getUser = (): User | null => {
   return globalUser;
 };
 
+// Get the token from local storage
 export const getToken = (): string | null => {
   return localStorage.getItem("accessToken");
 };
 
+// Remove the token from local storage
 export const removeToken = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   globalUser = null;
 };
 
+// Log out the user by clearing the local storage and redirecting to the login page
 export const logOut = () => {
   localStorage.clear();
   window.history.pushState(null, "", "/login");
@@ -35,12 +40,14 @@ export const logOut = () => {
   dispatchEvent(event);
 };
 
+// Check if the user is authenticated by checking if there's an access token
 export const isAuthenticated = (): boolean => {
-  return !!getToken(); // Checks if there's an access token
+  return !!getToken();
 };
 
+// Get the refresh token from local storage and decode it to get the user object and save the access token to local storage
 export const refreshToken = async (): Promise<void> => {
-  const refreshToken = localStorage.getItem("refreshToken"); // Assuming you store refresh token as well
+  const refreshToken = localStorage.getItem("refreshToken");
 
   if (!refreshToken) {
     removeToken();
@@ -49,7 +56,7 @@ export const refreshToken = async (): Promise<void> => {
   }
 
   try {
-    const response = await fetch("http://localhost:3000/auth/refresh", {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken }),
@@ -69,6 +76,7 @@ export const refreshToken = async (): Promise<void> => {
   }
 };
 
+// Fetch data from the API with the access token
 export const fetchWithAuth = async (
   url: string,
   options: RequestInit = {}
@@ -102,6 +110,6 @@ export const fetchWithAuth = async (
     return response;
   } catch (error) {
     console.error("API request failed:", error);
-    throw error; // Optionally rethrow to handle at the calling site
+    throw error;
   }
 };

@@ -5,6 +5,7 @@ import bookRoutes from "./book.route";
 import staffRoutes from "./staff.route";
 import orderRoutes from "./order.route";
 import libraryRoutes from "./library.route";
+import statRoutes from "./stats.route";
 
 /**
  * @swagger
@@ -33,5 +34,6 @@ router.use("/books", bookRoutes);
 router.use("/staff", staffRoutes);
 router.use("/orders", orderRoutes);
 router.use("/library", libraryRoutes);
+router.use("/stats", statRoutes);
 
 export default router;

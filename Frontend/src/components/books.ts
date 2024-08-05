@@ -2,27 +2,10 @@ import { Book } from "../interfaces/Book.interface";
 import { addToCart, isBookInCart } from "../services/cartServices";
 import { isBookInLibrary } from "../services/libraryServices";
 import { createElement } from "../utils/createElement";
+import { createStarRating } from "../utils/startRating";
 import { showAlert } from "./alert";
 
-const createStarRating = (rating: number) => {
-  const stars = [];
-  for (let i = 1; i <= 5; i++) {
-    const starClass = i <= rating ? "text-yellow-500" : "text-gray-300";
-    stars.push(
-      createElement("span", { className: starClass, innerHTML: "&#9733;" }) // Unicode for star symbol
-    );
-  }
-  return stars;
-};
-
-const handleBuyClick = async (book: Book, buttonContainer: HTMLElement) => {
-  await addToCart(book);
-  showAlert("Book added to cart", () => {
-    buttonContainer.innerHTML = "";
-    buttonContainer.appendChild(createShowInCartButton());
-  });
-};
-
+// functions to create buy, show in cart and show in library buttons
 const createBuyButton = (book: Book, buttonContainer: HTMLElement) => {
   return createElement(
     "button",
@@ -63,12 +46,22 @@ const createShowInLibraryButton = () => {
   );
 };
 
+// function to handle the buy button click
+const handleBuyClick = async (book: Book, buttonContainer: HTMLElement) => {
+  await addToCart(book);
+  showAlert("Book added to cart", () => {
+    buttonContainer.innerHTML = "";
+    buttonContainer.appendChild(createShowInCartButton());
+  });
+};
+
+// function to render books
 export const renderBooks = (books: Book[]) => {
   return books.map(async (book) => {
     const isInCart = isBookInCart(parseInt(book.id));
     const isInLibrary = await isBookInLibrary(book.id);
     const buttonContainer = createElement("div");
-    const button = isInLibrary
+    isInLibrary
       ? buttonContainer.append(createShowInLibraryButton())
       : isInCart
       ? buttonContainer.append(createShowInCartButton())

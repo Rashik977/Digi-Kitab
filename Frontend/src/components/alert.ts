@@ -1,6 +1,7 @@
 import { createPopup, closePopup } from "./popUp";
 import { createElement } from "../utils/createElement";
 
+// Function to show an alert popup
 export const showAlert = (message: string, onClose: () => void) => {
   const alertContent = createElement(
     "div",

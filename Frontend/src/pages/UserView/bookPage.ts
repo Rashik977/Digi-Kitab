@@ -1,11 +1,11 @@
 // ./pages/bookPage.ts
-import { createElement } from "../utils/createElement";
-import { fetchBookById } from "../services/bookServices";
-import { Navbar } from "../components/userNavigation";
-import { Book } from "../interfaces/Book.interface";
-import { addToCart, isBookInCart } from "../services/cartServices";
-import { showAlert } from "../components/alert";
-import { isBookInLibrary } from "../services/libraryServices";
+import { createElement } from "../../utils/createElement";
+import { fetchBookById } from "../../services/bookServices";
+import { Navbar } from "../../components/userNavigation";
+import { Book } from "../../interfaces/Book.interface";
+import { addToCart, isBookInCart } from "../../services/cartServices";
+import { showAlert } from "../../components/alert";
+import { isBookInLibrary } from "../../services/libraryServices";
 
 export const render = async (bookId: string) => {
   const book = await fetchBookById(+bookId);
@@ -81,7 +81,7 @@ export const render = async (bookId: string) => {
   const isInCart = isBookInCart(parseInt(book.id));
   const isInLibrary = await isBookInLibrary(book.id);
   const buttonContainer = createElement("div");
-  const button = isInLibrary
+  isInLibrary
     ? buttonContainer.append(createShowInLibraryButton())
     : isInCart
     ? buttonContainer.append(createShowInCartButton())
@@ -94,7 +94,6 @@ export const render = async (bookId: string) => {
   return main;
 };
 
-// Export the render function as the default export
 export default {
   render,
 };

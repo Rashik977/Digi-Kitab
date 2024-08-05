@@ -1,11 +1,15 @@
 import { fetchWithAuth, getUser } from "./authServices";
 
+// User login
 export const login = async (email: string, password: string): Promise<void> => {
-  const response = await fetch("http://localhost:3000/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/auth/login`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    }
+  );
 
   if (response.ok) {
     const { accessToken, refreshToken } = await response.json();
@@ -17,12 +21,13 @@ export const login = async (email: string, password: string): Promise<void> => {
   }
 };
 
+//User Registration
 export const register = async (
   name: string,
   email: string,
   password: string
 ): Promise<void> => {
-  const response = await fetch("http://localhost:3000/users", {
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password, name }),
@@ -34,6 +39,7 @@ export const register = async (
   }
 };
 
+// Update a User
 export const updateUser = async (
   id: number,
   name: string,
@@ -51,13 +57,16 @@ export const updateUser = async (
     throw new Error("User not authenticated");
   }
 
-  const response = await fetchWithAuth(`http://localhost:3000/users/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(toUpdate),
-  });
+  const response = await fetchWithAuth(
+    `${import.meta.env.VITE_BACKEND_URL}/users/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(toUpdate),
+    }
+  );
 
   if (!response.ok) {
     const error = await response.json();
@@ -65,6 +74,7 @@ export const updateUser = async (
   }
 };
 
+// Get Users
 export const getUsers = async (
   page: number,
   size: number,
@@ -82,7 +92,7 @@ export const getUsers = async (
   }
 
   const response = await fetchWithAuth(
-    `http://localhost:3000/users?${params.toString()}`
+    `${import.meta.env.VITE_BACKEND_URL}/users?${params.toString()}`
   );
 
   if (!response.ok) {
@@ -93,10 +103,14 @@ export const getUsers = async (
   return response.json();
 };
 
+// Delete a User
 export const deleteUser = async (id: number) => {
-  const response = await fetchWithAuth(`http://localhost:3000/users/${id}`, {
-    method: "DELETE",
-  });
+  const response = await fetchWithAuth(
+    `${import.meta.env.VITE_BACKEND_URL}/users/${id}`,
+    {
+      method: "DELETE",
+    }
+  );
 
   if (!response.ok) {
     const error = await response.json();

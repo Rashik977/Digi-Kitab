@@ -1,9 +1,9 @@
-import { createElement } from "../utils/createElement";
-import { Navbar } from "../components/userNavigation";
-import { fetchBooks } from "../services/bookServices";
-import { renderBooks } from "../components/books";
-import { renderPagination } from "../components/pagination";
-import { FilterComponent } from "../components/filter";
+import { createElement } from "../../utils/createElement";
+import { Navbar } from "../../components/userNavigation";
+import { fetchBooks } from "../../services/bookServices";
+import { renderBooks } from "../../components/books";
+import { renderPagination } from "../../components/pagination";
+import { FilterComponent } from "../../components/filter";
 
 export const render = () => {
   const main = createElement("main", {

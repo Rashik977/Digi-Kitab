@@ -1,9 +1,9 @@
-import { AdminNavbar } from "../components/adminNavigation";
-import { User } from "../interfaces/User.interface";
-import * as UserServices from "../services/userServices";
-import { createElement } from "../utils/createElement";
-import { createPopup, closePopup } from "../components/popUp";
-import { renderPagination } from "../components/pagination";
+import { AdminNavbar } from "../../components/adminNavigation";
+import { User } from "../../interfaces/User.interface";
+import * as UserServices from "../../services/userServices";
+import { createElement } from "../../utils/createElement";
+import { createPopup, closePopup } from "../../components/popUp";
+import { renderPagination } from "../../components/pagination";
 
 export const render = async () => {
   const main = createElement("main", {

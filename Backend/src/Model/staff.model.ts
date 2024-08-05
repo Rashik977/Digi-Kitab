@@ -3,7 +3,7 @@ import { getUserQuery, User } from "../Interfaces/User.interface";
 import { BaseModel } from "./base.model";
 
 export class StaffModel extends BaseModel {
-  // Function to get all Staff
+  // Function to get all Staff with pagination
   static getStaff(filter: getUserQuery) {
     const { q, page, size } = filter;
 
@@ -45,6 +45,7 @@ export class StaffModel extends BaseModel {
     return query.first();
   }
 
+  // Function to create a new Staff
   static async create(user: User, createdBy: User) {
     const userTOCreate = {
       name: user.name,

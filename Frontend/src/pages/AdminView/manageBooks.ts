@@ -1,10 +1,10 @@
-import { AdminNavbar } from "../components/adminNavigation";
-import { Book } from "../interfaces/Book.interface";
-import * as BookServices from "../services/bookServices";
-import { createElement } from "../utils/createElement";
-import { createPopup, closePopup } from "../components/popUp";
-import { renderPagination } from "../components/pagination";
-import { getUser } from "../services/authServices";
+import { AdminNavbar } from "../../components/adminNavigation";
+import { Book } from "../../interfaces/Book.interface";
+import * as BookServices from "../../services/bookServices";
+import { createElement } from "../../utils/createElement";
+import { createPopup, closePopup } from "../../components/popUp";
+import { renderPagination } from "../../components/pagination";
+import { getUser, logOut } from "../../services/authServices";
 
 export const render = async () => {
   const main = createElement("main", {
@@ -77,12 +77,28 @@ export const render = async () => {
 
   const user = getUser();
 
+  const logoutButtonContainer = createElement("div", {
+    className: "w-full flex justify-center items-center",
+  });
+
+  const logoutButton = createElement("button", {
+    className: "bg-red-500 text-white p-2 rounded w-1/12",
+    innerText: "Logout",
+    onclick: logOut,
+  });
+
+  logoutButtonContainer.appendChild(logoutButton);
+
   if (user && user.role === "super") {
     main.appendChild(navigation);
   }
+
   wrapper.appendChild(bookForm());
   wrapper.appendChild(searchContainer);
   wrapper.appendChild(container);
+  if (user && user.role === "staff") {
+    wrapper.appendChild(logoutButtonContainer);
+  }
   main.appendChild(wrapper);
 
   loadBook(currentPage);

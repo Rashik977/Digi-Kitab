@@ -1,11 +1,11 @@
-import { createElement } from "../utils/createElement";
+import { createElement } from "../../utils/createElement";
 import {
   getCartItems,
   removeCartItem,
   placeOrder,
-} from "../services/cartServices";
-import { showAlert } from "../components/alert";
-import { Navbar } from "../components/userNavigation";
+} from "../../services/cartServices";
+import { showAlert } from "../../components/alert";
+import { Navbar } from "../../components/userNavigation";
 
 export const render = async () => {
   const cartItems = await getCartItems();

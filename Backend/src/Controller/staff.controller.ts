@@ -8,7 +8,7 @@ import { getUserQuery } from "../Interfaces/User.interface";
 import { Roles } from "../Constants/Roles";
 import { UnauthorizedError } from "../Error/Error";
 
-const logger = loggerWithNameSpace("UserController");
+const logger = loggerWithNameSpace("StaffController");
 
 // Get all Staff
 export async function getStaff(
@@ -26,7 +26,7 @@ export async function getStaff(
   }
 }
 
-// Create a new user
+// Create a new staff
 export async function createStaff(
   req: Request,
   res: Response,
@@ -44,7 +44,7 @@ export async function createStaff(
   }
 }
 
-// Update a user
+// Update a staff
 export async function updateStaff(
   req: Request<{ id: string }>,
   res: Response,
@@ -52,9 +52,7 @@ export async function updateStaff(
 ) {
   const id = parseInt(req.params.id);
 
-  const userIdFromToken = req.user!.id;
   const userRoleFromToken = req.user!.role;
-  const userIdFromParams = req.params.id;
 
   try {
     if (userRoleFromToken !== Roles.SUPER) {
@@ -70,7 +68,7 @@ export async function updateStaff(
   }
 }
 
-// Delete a User
+// Delete a Staff
 export async function deleteStaff(
   req: Request<{ id: string }>,
   res: Response,

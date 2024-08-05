@@ -1,6 +1,7 @@
 import { logOut } from "../services/authServices";
 import { createElement } from "../utils/createElement";
 
+// Navigation for the admin panel
 export const AdminNavbar = () => {
   return createElement(
     "nav",

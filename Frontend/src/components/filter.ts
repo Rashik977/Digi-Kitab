@@ -1,7 +1,8 @@
 import { createElement } from "../utils/createElement";
 
+// Function to create the filter component
 export const FilterComponent = (onApplyFilters: () => void) => {
-  const aside = createElement("aside", {
+  const aside = createElement("section", {
     className:
       "bg-white rounded-lg shadow-md p-6 dark:bg-slate-900 lg:w-[300px]",
   });

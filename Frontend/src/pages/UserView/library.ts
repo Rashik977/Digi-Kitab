@@ -1,8 +1,8 @@
-import { createElement } from "../utils/createElement";
-import { Navbar } from "../components/userNavigation";
-import { fetchLibraryBooks } from "../services/libraryServices";
-import { renderPagination } from "../components/pagination";
-import { renderLibraryBooks } from "../components/libraryBooks";
+import { createElement } from "../../utils/createElement";
+import { Navbar } from "../../components/userNavigation";
+import { fetchLibraryBooks } from "../../services/libraryServices";
+import { renderPagination } from "../../components/pagination";
+import { renderLibraryBooks } from "../../components/libraryBooks";
 
 export const render = () => {
   const main = createElement("main", {
@@ -70,7 +70,6 @@ export const render = () => {
       booksContainer.innerHTML = ""; // Clear previous books
 
       // Render books
-      // Await the promise returned by renderLibraryBooks
       const bookElements = await renderLibraryBooks(books);
 
       // Check if bookElements is an array and append each element to the container

@@ -2,7 +2,7 @@ import { Book, getBookQuery } from "../Interfaces/Book.interface";
 import { BaseModel } from "./base.model";
 
 export class BookModel extends BaseModel {
-  // Function to get all users
+  // Function to get all books with pagination and filter
   static async getBooks(filter: getBookQuery) {
     const { q, page, size, category, genre, rating, priceMin, priceMax } =
       filter;
@@ -54,6 +54,7 @@ export class BookModel extends BaseModel {
     return query;
   }
 
+  // Function to count the number of books with pagination and filter
   static async count(filter: getBookQuery) {
     const { q, category, genre, rating, priceMin, priceMax } = filter;
     const query = this.queryBuilder().count("*").table("books").first();
@@ -81,6 +82,7 @@ export class BookModel extends BaseModel {
     return query;
   }
 
+  // Function to get book by ID
   static getBookById(id: number) {
     return this.queryBuilder()
       .select(
@@ -115,12 +117,14 @@ export class BookModel extends BaseModel {
     return this.queryBuilder().delete().table("books").where({ id });
   }
 
+  // function to add rating to a book
   static async createRating(bookId: number, userId: number, rating: number) {
     await this.queryBuilder()
       .insert({ book_id: bookId, user_id: userId, rating })
       .table("ratings");
   }
 
+  // function to calculate average rating of a book
   static async calculateAverageRating(bookId: number): Promise<number> {
     const result = await this.queryBuilder()
       .avg("rating as averageRating")
@@ -131,6 +135,7 @@ export class BookModel extends BaseModel {
     return Math.floor(result.averageRating);
   }
 
+  // function to update book rating
   static async updateBookRating(bookId: number, averageRating: number) {
     await this.queryBuilder()
       .update({ rating: averageRating })
@@ -138,6 +143,7 @@ export class BookModel extends BaseModel {
       .where({ id: bookId });
   }
 
+  // function to update rating of a book by a user
   static async updateRating(bookId: number, userId: number, rating: number) {
     await this.queryBuilder()
       .update({ rating })
@@ -145,6 +151,7 @@ export class BookModel extends BaseModel {
       .where({ book_id: bookId, user_id: userId });
   }
 
+  // function to check if a rating exists
   static async checkRatingExists(
     bookId: number,
     userId: number
@@ -158,6 +165,7 @@ export class BookModel extends BaseModel {
     return !!result;
   }
 
+  // function to get rating of a book by a user
   static async getRating(
     bookId: number,
     userId: number

@@ -1,8 +1,8 @@
-import { updateUser } from "../services/userServices";
-import { getUser } from "../services/authServices";
-import { createElement } from "../utils/createElement";
-import { Navbar } from "../components/userNavigation";
-import { darkModeToggle } from "../components/darkModeToggle";
+import { updateUser } from "../../services/userServices";
+import { getUser } from "../../services/authServices";
+import { createElement } from "../../utils/createElement";
+import { Navbar } from "../../components/userNavigation";
+import { darkModeToggle } from "../../components/darkModeToggle";
 
 export const render = () => {
   const main = createElement("main", {
