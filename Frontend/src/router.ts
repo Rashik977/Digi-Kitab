@@ -107,10 +107,19 @@ const routes: Route[] = [
     match: match("/library/:id/chapter/:chapterId"),
     load: async (params) => {
       const module = await import("./pages/bookReading");
-      console.log(params);
       return {
         render: () => module.render(parseInt(params!.id), params!.chapterId),
       };
+    },
+  },
+  {
+    match: match("/stats"),
+    load: async () => {
+      if (!isAuthenticated()) {
+        window.history.pushState(null, "", "/login");
+        return import("./pages/login"); // Redirect to login page
+      }
+      return import("./pages/stats");
     },
   },
   {

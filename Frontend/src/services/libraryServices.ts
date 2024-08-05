@@ -1,4 +1,5 @@
 import { Book } from "../interfaces/Book.interface";
+import { ReadingStats } from "../interfaces/ReadingStats";
 import { fetchWithAuth } from "./authServices";
 
 export const fetchLibraryBooks = async (
@@ -155,4 +156,25 @@ export const fetchReadingTime = async (bookId: number) => {
     throw new Error("Failed to fetch reading time");
   }
   return response.json();
+};
+
+export const fetchReadingStats = async (): Promise<ReadingStats[]> => {
+  try {
+    const response = await await fetchWithAuth(
+      `http://localhost:3000/library/reading-data/daily`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching reading stats:", error);
+    throw error;
+  }
 };

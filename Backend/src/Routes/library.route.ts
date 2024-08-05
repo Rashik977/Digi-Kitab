@@ -8,11 +8,13 @@ import {
   getBookChapters,
   getChapterContent,
   getCurrentChapterId,
+  getDailyReadingData,
   getLibrary,
   getTotalReadingTime,
   setCurrentChapterId,
   startSession,
 } from "../Controller/library.controller";
+import { getMonth } from "date-fns";
 
 const libraryRoutes = express.Router();
 
@@ -30,6 +32,7 @@ libraryRoutes.get(
   authorize("book.get"),
   getAllLibraryBooks
 );
+libraryRoutes.get("/reading-data/daily", authenticate, getDailyReadingData);
 
 libraryRoutes.post("/:bookId/start-session", authenticate, startSession);
 

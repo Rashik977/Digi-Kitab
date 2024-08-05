@@ -38,7 +38,7 @@ export const render = () => {
   });
 
   const searchContainer = createElement("div", {
-    className: "w-1/3 flex gap-2 mb-4 ",
+    className: "w-full lg:w-1/3 flex gap-2 mb-4  ",
   });
 
   searchContainer.appendChild(searchInput);

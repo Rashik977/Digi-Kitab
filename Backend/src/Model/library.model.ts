@@ -1,6 +1,7 @@
 import knex from "knex";
 import { getBookQuery } from "../Interfaces/Book.interface";
 import { BaseModel } from "./base.model";
+import { subDays, startOfDay, format, subMonths, startOfMonth } from "date-fns";
 
 export class LibraryModel extends BaseModel {
   static async getLibrary(userId: number, filter: getBookQuery) {
@@ -169,5 +170,50 @@ export class LibraryModel extends BaseModel {
       .andWhere("book_id", bookId);
 
     return sessions;
+  }
+
+  static async getReadingTimeForPeriod(userId: number, start: Date, end: Date) {
+    const sessions = await this.queryBuilder()
+      .select("start_time", "end_time")
+      .from("reading_session")
+      .where("user_id", userId)
+      .andWhereBetween("start_time", [start, end]);
+
+    return sessions;
+  }
+
+  static async getDailyReadingData(userId: number) {
+    const now = new Date();
+    const startDate = subDays(now, 30);
+
+    const data = await this.queryBuilder()
+      .select(this.queryBuilder().raw("DATE(start_time) as date"))
+      .select(
+        this.queryBuilder().raw(
+          `sum(EXTRACT(EPOCH FROM (end_time - start_time)) / 60) as total_minutes`
+        )
+      )
+      .from("reading_session")
+      .where({ user_id: userId })
+      .andWhere("start_time", ">=", startDate)
+      .groupByRaw("DATE(start_time)")
+      .orderBy("date");
+
+    // Fill in missing dates with zeroes
+    const filledData = Array.from({ length: 30 }, (_, i) => {
+      const date = startOfDay(subDays(now, 30 - i));
+      const formattedDate = format(date, "yyyy-MM-dd"); // Use `format` from date-fns
+      const entry = data.find((d) => {
+        const entryDate = new Date(d.date);
+        return entryDate.toISOString().split("T")[0] === formattedDate;
+      });
+
+      return {
+        date: formattedDate,
+        minutes: entry ? parseFloat(entry.totalMinutes) : 0,
+      };
+    });
+
+    return filledData;
   }
 }

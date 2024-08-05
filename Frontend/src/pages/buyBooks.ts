@@ -11,10 +11,10 @@ export const render = () => {
   });
   const navigation = Navbar();
   const section = createElement("section", {
-    className: "mx-1/2 flex gap-10",
+    className: "mx-1/2 flex gap-10 flex-col lg:flex-row",
   });
   const aside = createElement("aside", {
-    className: "w-1/4 lg:block",
+    className: "w-full p-5 lg:w-[700px]",
   });
   const container = createElement("div", {
     className: "p-6 flex flex-col items-center justify-center",
@@ -42,7 +42,7 @@ export const render = () => {
   });
 
   const searchContainer = createElement("div", {
-    className: "w-1/3 flex gap-2 mb-4 ",
+    className: " w-full lg:w-1/3 flex gap-2 mb-4 ",
   });
 
   searchContainer.appendChild(searchInput);

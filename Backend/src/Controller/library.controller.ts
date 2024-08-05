@@ -227,3 +227,22 @@ export async function getTotalReadingTime(
     next(e);
   }
 }
+
+export async function getDailyReadingData(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { user } = req;
+    if (!user) throw new Error("User not found");
+
+    logger.info(`Getting daily reading data for user ${user.id}`);
+    const data = await LibraryService.getDailyReadingData(parseInt(user.id));
+
+    res.status(200).json(data);
+  } catch (e) {
+    logger.error(`Error getting daily reading data`, { error: e });
+    next(e);
+  }
+}

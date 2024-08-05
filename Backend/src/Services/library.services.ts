@@ -175,8 +175,6 @@ export const getTotalReadingTime = async (userId: number, bookId: number) => {
   );
   if (!sessions) throw new NotFoundError("Reading time not found");
 
-  console.log(sessions);
-
   // Calculate the total reading time in minutes
   let totalReadingTime = 0;
   sessions.forEach((session: { startTime: Date; endTime: Date }) => {
@@ -186,4 +184,53 @@ export const getTotalReadingTime = async (userId: number, bookId: number) => {
   });
 
   return Math.floor(totalReadingTime);
+};
+
+export const getReadingTimeForPeriod = async (
+  userId: number,
+  period: "day" | "week" | "month"
+) => {
+  const now = new Date();
+  let startOfPeriod: Date;
+
+  switch (period) {
+    case "day":
+      startOfPeriod = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      );
+      break;
+    case "week":
+      startOfPeriod = new Date(now.setDate(now.getDate() - now.getDay()));
+      break;
+    case "month":
+      startOfPeriod = new Date(now.getFullYear(), now.getMonth(), 1);
+      break;
+    default:
+      throw new Error("Invalid period");
+  }
+  const sessions = await LibraryModel.LibraryModel.getReadingTimeForPeriod(
+    userId,
+    startOfPeriod,
+    now
+  );
+  if (!sessions) throw new NotFoundError("Reading time not found");
+
+  const totalMinutes = sessions.reduce((acc, session) => {
+    const startTime = new Date(session.startTime);
+    const endTime = new Date(session.endTime);
+    const duration = (endTime.getTime() - startTime.getTime()) / (1000 * 60); // duration in minutes
+    return acc + duration;
+  }, 0);
+
+  return Math.floor(totalMinutes);
+};
+
+export const getDailyReadingData = async (userId: number) => {
+  const data = await LibraryModel.LibraryModel.getDailyReadingData(userId);
+
+  if (!data) throw new NotFoundError("Reading data not found");
+
+  return data;
 };

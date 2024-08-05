@@ -53,7 +53,6 @@ export const renderLibraryBooks = (books: Book[]) => {
       const chapterIndex = chapters.chapters.findIndex(
         (chapter: any) => chapter.id === loadChapter.chapterId
       );
-      console.log(chapterIndex);
       const initialRating = await fetchUserRating(+book.id);
 
       // Calculate progress

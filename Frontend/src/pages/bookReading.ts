@@ -15,12 +15,13 @@ const renderChapterList = (
 ) => {
   const chapterListContainer = createElement("div", {
     className:
-      "chapter-list bg-gray-100 w-64 h-full fixed left-0 top-0 overflow-y-auto transform -translate-x-full transition-transform duration-300 ease-in-out z-20",
+      "chapter-list bg-gray-100 w-64 h-full fixed left-0 top-0 overflow-y-auto transform -translate-x-full transition-transform duration-300 ease-in-out z-20 dark:bg-gray-800 dark:text-white",
     id: "chapter-sidebar",
   });
 
   const closeButton = createElement("button", {
-    className: "absolute top-2 right-2 text-gray-500 hover:text-gray-700",
+    className:
+      "absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300",
     innerHTML: `
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -31,7 +32,7 @@ const renderChapterList = (
   chapterListContainer.appendChild(closeButton);
 
   const chapterListTitle = createElement("h2", {
-    className: "text-xl font-bold mb-4 p-4",
+    className: "text-xl font-bold mb-4 p-4 dark:text-white",
     innerText: "Chapters",
   });
   chapterListContainer.appendChild(chapterListTitle);
@@ -40,8 +41,8 @@ const renderChapterList = (
     const chapterLink = createElement("a", {
       href: `/library/${bookId}/chapter/${chapter.id}`,
       innerText: chapter.title || `Chapter ${chapter.id}`,
-      className: `block py-2 px-4 text-gray-700 hover:bg-gray-200 cursor-pointer ${
-        chapter.id === currentChapterId ? "bg-gray-300" : ""
+      className: `block py-2 px-4 text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 cursor-pointer ${
+        chapter.id === currentChapterId ? "bg-gray-300 dark:bg-gray-600" : ""
       }`,
     });
 
@@ -49,6 +50,7 @@ const renderChapterList = (
       event.preventDefault();
       setCurrentChapterId(bookId, chapter.id);
       window.history.pushState(null, "", chapterLink.getAttribute("href"));
+      window.scrollTo(0, 0);
       const chapterContent = await fetchChapterContent(bookId, chapter.id);
       renderChapterContent(chapterContent.chapter);
       updateNavigationButtons(bookId, chapters, chapter.id);
@@ -72,8 +74,8 @@ const renderChapterContent = (chapter: {
     const contentContainer = document.getElementById("chapter-content");
     if (contentContainer) {
       contentContainer.innerHTML = `
-      <h2 class="text-2xl font-bold mb-4">${chapter.title}</h2>
-      <div class="prose max-w-none">${chapter.content}</div>
+      <h2 class="text-2xl font-bold mb-4 dark:text-white">${chapter.title}</h2>
+      <div class="prose max-w-none dark:prose-dark">${chapter.content}</div>
     `;
     }
   }
@@ -121,11 +123,12 @@ export const render = async (bookId: number, chapterId: string) => {
 
   const topBar = createElement("div", {
     className:
-      "bg-white shadow-md py-4 px-20 flex justify-between dark:bg-stone-900",
+      "bg-white shadow-md py-4 px-6 flex justify-between items-center dark:bg-gray-900 dark:text-white",
   });
 
   const toggleButton = createElement("button", {
-    className: "text-gray-700 hover:text-gray-900 focus:outline-none",
+    className:
+      "text-gray-700 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:text-gray-100",
     innerHTML: `
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -136,7 +139,8 @@ export const render = async (bookId: number, chapterId: string) => {
   const library = createElement(
     "button",
     {
-      className: "text-gray-700 hover:text-gray-900",
+      className:
+        "text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100",
       onclick: async () => {
         await endSession(bookId); // End session when navigating to the library
         window.location.href = "/library";
@@ -158,7 +162,7 @@ export const render = async (bookId: number, chapterId: string) => {
   // Add chapter content container early
   const contentContainer = createElement("div", {
     id: "chapter-content",
-    className: "chapter-content p-6 md:ml-64 w-[1000px]",
+    className: "chapter-content px-10 xl:px-60 w-full",
   });
 
   const darkMode = darkModeToggle();
@@ -171,9 +175,6 @@ export const render = async (bookId: number, chapterId: string) => {
   // Add beforeunload event listener to end session on tab close
   window.addEventListener("beforeunload", async (event) => {
     await endSession(bookId);
-    // Optionally, prevent the default unload behavior
-    // event.preventDefault();
-    // event.returnValue = '';
   });
 
   try {
@@ -189,7 +190,6 @@ export const render = async (bookId: number, chapterId: string) => {
       bookId,
       initialChapterId
     );
-    console.log(contentContainer);
 
     // Render the initial chapter content
     setTimeout(() => {
@@ -199,21 +199,25 @@ export const render = async (bookId: number, chapterId: string) => {
 
     // Add Previous and Next buttons
     const navButtonsContainer = createElement("div", {
-      className: "flex justify-between mt-4",
+      className: "flex justify-center gap-20 p-10",
     });
 
     const prevButton = createElement("button", {
       id: "prev-chapter",
       className:
-        "bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300 hidden",
-      innerText: "Previous",
+        "bg-gray-200 text-gray-700 p-2 rounded-lg hover:bg-gray-300 hidden dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600",
+      innerHTML: `
+        <img src="/icons/leftArrow.png" alt="Previous" class="w-6 h-6"/>
+      `,
     });
 
     const nextButton = createElement("button", {
       id: "next-chapter",
       className:
-        "bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300 hidden",
-      innerText: "Next",
+        "bg-gray-200 text-gray-700 p-2 rounded-lg hover:bg-gray-300 hidden dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600",
+      innerHTML: `
+        <img src="/icons/rightArrow.png" alt="Next" class="w-6 h-6"/>
+      `,
     });
 
     prevButton.addEventListener("click", async () => {
@@ -231,6 +235,8 @@ export const render = async (bookId: number, chapterId: string) => {
           "",
           `/library/${bookId}/chapter/${prevChapterId}`
         );
+
+        window.scrollTo(0, 0);
       }
     });
 
@@ -249,6 +255,7 @@ export const render = async (bookId: number, chapterId: string) => {
           "",
           `/library/${bookId}/chapter/${nextChapterId}`
         );
+        window.scrollTo(0, 0);
       }
     });
 
@@ -256,13 +263,7 @@ export const render = async (bookId: number, chapterId: string) => {
     navButtonsContainer.appendChild(nextButton);
     mainContainer.appendChild(navButtonsContainer);
   } catch (error) {
-    console.error(error);
-    mainContainer.appendChild(
-      createElement("p", {
-        innerText: "Failed to load book chapters.",
-        className: "text-red-600 p-4",
-      })
-    );
+    console.error("Error fetching book chapters or content:", error);
   }
 
   return mainContainer;
